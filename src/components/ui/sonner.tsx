@@ -11,10 +11,10 @@ export function Toaster() {
       className="z-50"
       toastOptions={{
         classNames: {
-          toast: "group toast border-none rounded-xl shadow-lg",
-          description: "text-sm",
-          actionButton: "text-sm font-medium",
-          cancelButton: "text-sm font-medium",
+          toast: "group toast border border-white/10 rounded-xl shadow-lg shadow-black/20",
+          description: "text-sm text-slate-300",
+          actionButton: "text-xs font-medium text-indigo-400",
+          cancelButton: "text-xs font-medium text-slate-400",
         },
       }}
     />
@@ -22,4 +22,3 @@ export function Toaster() {
 }
 
 export { SonnerToaster };
-

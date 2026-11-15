@@ -25,22 +25,22 @@ function PRRowSkeleton() {
       <div className="flex flex-row items-start justify-between gap-3">
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <div className="h-6 w-12 rounded-lg bg-muted shrink-0" />
-            <div className="h-6 w-6 rounded-lg bg-muted shrink-0" />
+            <div className="h-6 w-12 rounded-lg bg-gray-800 shrink-0" />
+            <div className="h-6 w-6 rounded-lg bg-gray-800 shrink-0" />
           </div>
-          <div className="h-4 w-3/4 rounded-md bg-muted shrink-0 mt-2" />
-          <p className="text-xs text-muted-foreground mt-1">
-            <span className="h-3 w-10 rounded-md bg-muted shrink-0" />
-            <span className="h-3 w-4 rounded-md bg-muted shrink-0" />
+          <div className="h-4 w-3/4 rounded-md bg-gray-800 shrink-0 mt-2" />
+          <p className="text-xs text-slate-400 mt-1">
+            <span className="h-3 w-10 rounded-md bg-gray-800 shrink-0" />
+            <span className="h-3 w-4 rounded-md bg-gray-800 shrink-0" />
           </p>
         </div>
       </div>
-      <div className="flex items-center gap-3 text-xs text-muted-foreground mt-2">
-        <span className="h-3 w-1/4 rounded-md bg-muted shrink-0" />
+      <div className="flex items-center gap-3 text-xs text-slate-400 mt-2">
+        <span className="h-3 w-1/4 rounded-md bg-gray-800 shrink-0" />
         <span className="flex items-center gap-1">
-          <span className="h-3 w-12 rounded-md bg-muted shrink-0" />
-          <span className="h-3 w-2 rounded-md bg-muted shrink-0" />
-          <span className="h-3 w-12 rounded-md bg-muted shrink-0" />
+          <span className="h-3 w-12 rounded-md bg-gray-800 shrink-0" />
+          <span className="h-3 w-2 rounded-md bg-gray-800 shrink-0" />
+          <span className="h-3 w-12 rounded-md bg-gray-800 shrink-0" />
         </span>
       </div>
     </div>
@@ -97,8 +97,8 @@ export default function PullRequestsPage() {
         <div className="space-y-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold tracking-tighter">Pull Requests</h1>
-              <p className="text-muted-foreground mt-1">
+              <h1 className="text-3xl font-bold tracking-tighter text-[#F8FAFC]">Pull Requests</h1>
+              <p className="text-slate-400 mt-1">
                 Monitor and manage pull requests across all repositories
               </p>
             </div>
@@ -107,11 +107,11 @@ export default function PullRequestsPage() {
             </Button>
           </div>
         </div>
-        <Card className="card-professional shadow-sm">
+        <Card className="card-elevated-dark shadow-sm">
           <CardContent className="p-6">
             <div className="flex flex-col sm:flex-row gap-4 items-end">
               <div className="flex items-center gap-3">
-                <Label className="text-xs font-medium">State</Label>
+                <Label className="text-xs font-semibold text-slate-400">State</Label>
                 <Button
                   variant="outline"
                   size="sm"
@@ -128,7 +128,7 @@ export default function PullRequestsPage() {
                 </Button>
               </div>
               <div className="flex items-center gap-3">
-                <Label className="text-xs font-medium">Repository</Label>
+                <Label className="text-xs font-semibold text-slate-400">Repository</Label>
                 <select
                   value={filter.repositoryId}
                   onChange={(e) => setFilter({ ...filter, repositoryId: e.target.value })}
@@ -143,9 +143,9 @@ export default function PullRequestsPage() {
             </div>
           </CardContent>
         </Card>
-        <Card className="card-professional shadow-sm">
+        <Card className="card-elevated-dark shadow-sm">
           <CardContent>
-            <div className="divide-y divide-input/50">
+            <div className="divide-y divide-white/10">
               {[1, 2, 3, 4, 5].map((i) => (
                 <PRRowSkeleton key={i} />
               ))}
@@ -159,9 +159,11 @@ export default function PullRequestsPage() {
   if (filtered.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-        <GitPullRequest className="h-12 w-12 shrink-0 text-muted-foreground" />
-        <h2 className="text-xl font-semibold">No pull requests</h2>
-        <p className="text-muted-foreground max-w-sm mx-auto">
+        <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center text-slate-400 shrink-0 mb-4">
+          <GitPullRequest className="h-8 w-8 shrink-0" />
+        </div>
+        <h2 className="text-xl font-semibold text-[#F8FAFC]">No pull requests</h2>
+        <p className="text-slate-400 max-w-sm mx-auto">
           Sync your repositories to see pull requests here.
         </p>
         <Button onClick={() => {
@@ -184,8 +186,8 @@ export default function PullRequestsPage() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tighter">Pull Requests</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-3xl font-bold tracking-tighter text-[#F8FAFC]">Pull Requests</h1>
+          <p className="text-slate-400 mt-1">
             Monitor and manage pull requests across all repositories
           </p>
         </div>
@@ -203,11 +205,12 @@ export default function PullRequestsPage() {
         </Button>
       </div>
 
-      <Card className="card-professional shadow-sm">
+      {/* Filters */}
+      <Card className="card-elevated-dark shadow-sm">
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row gap-4 items-end">
             <div className="flex items-center gap-3">
-              <Label className="text-xs font-medium">State</Label>
+              <Label className="text-xs font-semibold text-slate-400">State</Label>
               <Button
                 variant="outline"
                 size="sm"
@@ -224,7 +227,7 @@ export default function PullRequestsPage() {
               </Button>
             </div>
             <div className="flex items-center gap-3">
-              <Label className="text-xs font-medium">Repository</Label>
+              <Label className="text-xs font-semibold text-slate-400">Repository</Label>
               <select
                 value={filter.repositoryId}
                 onChange={(e) => setFilter({ ...filter, repositoryId: e.target.value })}
@@ -240,15 +243,16 @@ export default function PullRequestsPage() {
         </CardContent>
       </Card>
 
-      <Card className="card-professional shadow-sm">
+      {/* PRs List */}
+      <Card className="card-elevated-dark shadow-sm">
         <CardContent>
-          <div className="divide-y divide-input/50">
+          <div className="divide-y divide-white/10">
             {filtered.map((pr) => (
               <motion.div
                 key={pr.id}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="flex flex-col gap-2 p-4 hover:bg-accent/30 rounded-lg transition-colors"
+                className="flex flex-col gap-2 p-4 hover:bg-white/[0.02] rounded-lg transition-colors"
               >
                 <div className="flex flex-row items-start justify-between gap-3">
                   <div className="flex-1">
@@ -261,36 +265,36 @@ export default function PullRequestsPage() {
                               ? "secondary"
                               : "destructive"
                         }
-                        className="text-xs font-medium"
+                        className="text-xs font-semibold"
                       >
                         {pr.state}
                       </Badge>
                       {pr.draft && (
-                        <Badge variant="outline" className="text-xs font-medium">
+                        <Badge variant="outline" className="text-xs font-semibold">
                           Draft
                         </Badge>
                       )}
                     </div>
-                    <h3 className="text-sm font-semibold">{pr.title}</h3>
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <h3 className="text-sm font-semibold text-[#F8FAFC]">{pr.title}</h3>
+                    <p className="text-xs text-slate-400 mt-1">
                       #{pr.number ?? "-"} • Repository #{pr.repositoryId}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 text-xs text-muted-foreground mt-2">
+                <div className="flex items-center gap-3 text-xs text-slate-400 mt-2">
                   <span>{pr.author ?? "unknown"}</span>
                   <span className="flex items-center gap-1">
-                    <span className="font-medium">{pr.baseBranch}</span>
-                    <span className="text-primary">←</span>
-                    <span className="font-medium">{pr.headBranch}</span>
+                    <span className="font-semibold text-[#F8FAFC]">{pr.baseBranch}</span>
+                    <span className="text-indigo-400">←</span>
+                    <span className="font-semibold text-[#F8FAFC]">{pr.headBranch}</span>
                   </span>
                 </div>
               </motion.div>
             ))}
           </div>
         </CardContent>
-        <CardFooter className="pt-4 border-t border-input/50">
-          <a href="/" className="text-sm text-primary hover:underline">
+        <CardFooter className="pt-4 border-t border-white/10">
+          <a href="/" className="text-xs text-indigo-400 hover:underline">
             View Dashboard →
           </a>
         </CardFooter>

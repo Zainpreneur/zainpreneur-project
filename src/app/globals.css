@@ -1,66 +1,74 @@
 @import "tailwindcss";
 
+/* ============================================================================
+   Design System Tokens — Zainpreneur GitHub Management OS
+   Light: Cool-slate canvas (#F8FAFC), white cards (#FFFFFF), dark slate text (#0F172A)
+   Dark:  Obsidian canvas (#0B0F17), slate surfaces (#111827), off-white text (#F8FAFC)
+   ============================================================================ */
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 248 250 252;      /* slate-50 */
+    --foreground: 15 23 42;         /* slate-900 */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 255 255 255;            /* white */
+    --card-foreground: 15 23 42;    /* slate-900 */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 255 255 255;
+    --popover-foreground: 15 23 42;
 
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 79 70 229;           /* indigo-600 */
+    --primary-foreground: 255 255 255;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 241 245 249;       /* slate-100 */
+    --secondary-foreground: 15 23 42;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 241 245 249;           /* slate-100 */
+    --muted-foreground: 100 116 139; /* slate-500 */
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 163 230 53;           /* lime-400 */
+    --accent-foreground: 15 23 42;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 239 68 68;       /* red-500 */
+    --destructive-foreground: 255 255 255;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --border: 226 232 240;          /* slate-200 */
+    --input: 226 232 240;
+    --ring: 79 70 229;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 11 15 23;         /* obsidian */
+    --foreground: 248 250 252;      /* slate-50 */
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 17 24 39;               /* gray-900 */
+    --card-foreground: 248 250 252;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 17 24 39;
+    --popover-foreground: 248 250 252;
 
-    --primary: 217.2 91.1% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 96 165 250;          /* blue-400 */
+    --primary-foreground: 15 23 42;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 31 41 55;          /* gray-800 */
+    --secondary-foreground: 248 250 252;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 31 41 55;
+    --muted-foreground: 148 163 184; /* slate-400 */
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 163 230 53;           /* lime-400 */
+    --accent-foreground: 15 23 42;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 239 68 68;
+    --destructive-foreground: 255 255 255;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --border: 255 255 255 / 0.1;
+    --input: 255 255 255 / 0.1;
+    --ring: 96 165 250;
+
+    --radius: 0.75rem;
   }
 }
 
@@ -71,57 +79,192 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 }
 
-/* --------------------------------------------------------------
-   Design System — Professional Enterprise Theme
-   -------------------------------------------------------------- */
+/* ============================================================================
+   Surface Hierarchy — Elevated Cards & Panels
+   ============================================================================ */
 
-.card-professional {
-  @apply rounded-xl border border-input/50 bg-card shadow-sm;
+/* Light mode card */
+.card-elevated-light {
+  @apply rounded-xl border border-slate-200 bg-white shadow-sm;
 }
 
-/* Button base states */
-.btn-pro {
-  @apply px-4 py-2.5 rounded-lg font-medium transition-all duration-200;
+/* Dark mode card */
+.card-elevated-dark {
+  @apply rounded-xl border border-white/10 bg-gray-900 shadow-lg shadow-black/20;
 }
 
-/* Table styling */
-.table-header {
-  @apply text-xs font-semibold uppercase tracking-wider text-muted-foreground;
+/* Subtle card for secondary surfaces */
+.card-subtle-light {
+  @apply rounded-xl border border-slate-100 bg-slate-50 shadow-sm;
+}
+.card-subtle-dark {
+  @apply rounded-xl border border-white/5 bg-gray-800 shadow-sm;
 }
 
-.table-row {
-  @apply hover:bg-muted/50 transition-colors duration-200;
+/* ============================================================================
+   Button System
+   ============================================================================ */
+
+.btn-primary {
+  @apply inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200;
+  @apply bg-indigo-600 text-white shadow-sm shadow-indigo-500/20;
+  @apply hover:bg-indigo-700 hover:shadow-indigo-500/30 hover:translate-y-[-1px];
+  @apply active:bg-indigo-800 active:translate-y-0;
+  @apply disabled:pointer-events-none disabled:opacity-50 disabled:bg-indigo-400;
 }
 
-/* Clean input */
+.btn-primary-dark {
+  @apply bg-blue-400 text-slate-900 shadow-sm shadow-blue-500/25;
+  @apply hover:bg-blue-300 hover:shadow-blue-500/35 hover:translate-y-[-1px];
+  @apply active:bg-blue-200 active:translate-y-0;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200;
+  @apply bg-slate-100 text-slate-700;
+  @apply hover:bg-slate-200 hover:translate-y-[-1px];
+  @apply active:bg-slate-200 active:translate-y-0;
+  @apply disabled:pointer-events-none disabled:opacity-50;
+}
+
+.btn-secondary-dark {
+  @apply bg-gray-800 text-slate-200;
+  @apply hover:bg-gray-700 hover:translate-y-[-1px];
+}
+
+.btn-ghost {
+  @apply inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200;
+  @apply text-slate-600 hover:bg-slate-100 hover:text-slate-900;
+  @apply active:bg-slate-200;
+  @apply disabled:pointer-events-none disabled:opacity-50;
+}
+
+.btn-ghost-dark {
+  @apply text-slate-400 hover:bg-gray-800 hover:text-slate-100;
+  @apply active:bg-gray-700;
+}
+
+.btn-danger {
+  @apply inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200;
+  @apply bg-red-500 text-white shadow-sm shadow-red-500/20;
+  @apply hover:bg-red-600 hover:shadow-red-500/30 hover:translate-y-[-1px];
+  @apply active:bg-red-700 active:translate-y-0;
+  @apply disabled:pointer-events-none disabled:opacity-50;
+}
+
+/* ============================================================================
+   Input & Select System
+   ============================================================================ */
+
 .input-pro {
-  @apply rounded-lg border border-input bg-background px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary;
+  @apply inline-flex items-center rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm;
+  @apply focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600;
+  @apply disabled:cursor-not-allowed disabled:opacity-50;
+  @apply dark:bg-gray-900 dark:border-white/10 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-400;
 }
 
-/* Native select styling — consistent with input-pro */
 .select-pro {
-  @apply rounded-lg border border-input bg-background px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary cursor-pointer;
+  @apply inline-flex items-center rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm cursor-pointer;
+  @apply focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600;
+  @apply disabled:cursor-not-allowed disabled:opacity-50;
+  @apply dark:bg-gray-900 dark:border-white/10 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-400;
 }
 
-/* Badge styling */
+/* ============================================================================
+   Badge System
+   ============================================================================ */
+
 .badge-pro {
   @apply inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold leading-none;
+  @apply border-slate-200 bg-slate-100 text-slate-700;
+  @apply dark:border-white/10 dark:bg-gray-800 dark:text-slate-300;
 }
 
-/* Skeleton */
+.badge-success {
+  @apply inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold leading-none;
+  @apply border-lime-200 bg-lime-50 text-lime-800;
+  @apply dark:border-lime-500/30 dark:bg-lime-900/20 dark:text-lime-400;
+}
+
+.badge-secondary-outline {
+  @apply inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold leading-none;
+  @apply border-slate-200 bg-transparent text-slate-600;
+  @apply dark:border-white/10 dark:bg-transparent dark:text-slate-400;
+}
+
+/* ============================================================================
+   Skeleton Placeholders
+   ============================================================================ */
+
 .skeleton {
-  @apply animate-pulse rounded-md bg-muted;
+  @apply animate-pulse rounded-md bg-slate-200;
+  @apply dark:bg-gray-800;
 }
 
-/* Page canvas */
-.page-canvas {
-  @apply bg-slate-50 dark:bg-background min-h-screen;
+.skeleton-text {
+  @apply h-4 rounded-md bg-slate-200 shrink-0;
+  @apply dark:bg-gray-800;
 }
 
-/* Theme overrides */
+.skeleton-circle {
+  @apply h-10 w-10 rounded-full bg-slate-200 shrink-0;
+  @apply dark:bg-gray-800;
+}
+
+/* ============================================================================
+   Empty States
+   ============================================================================ */
+
+.empty-state-icon {
+  @apply h-16 w-16 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 shrink-0;
+  @apply dark:bg-gray-800 dark:text-slate-500;
+}
+
+.empty-state-icon.success {
+  @apply bg-lime-50 text-lime-600;
+  @apply dark:bg-lime-900/20 dark:text-lime-400;
+}
+
+/* ============================================================================
+   Table System
+   ============================================================================ */
+
+.table-row-light {
+  @apply hover:bg-slate-50/80 transition-colors duration-200;
+}
+.table-row-dark {
+  @apply hover:bg-white/[0.02] transition-colors duration-200;
+}
+
+/* ============================================================================
+   Page Canvas
+   ============================================================================ */
+
+.page-canvas-light {
+  @apply bg-slate-50 min-h-screen;
+}
+.page-canvas-dark {
+  @apply bg-[#0B0F17] min-h-screen;
+}
+
+/* ============================================================================
+   Search Input (Command Palette Style)
+   ============================================================================ */
+
+.search-input-pro {
+  @apply inline-flex items-center rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm;
+  @apply focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600;
+  @apply dark:bg-gray-900 dark:border-white/10 dark:text-slate-100 dark:focus:border-blue-400 dark:focus:ring-blue-400;
+}
+
+/* ============================================================================
+   Theme overrides for Tailwind CSS variables
+   ============================================================================ */
+
 @theme inline {
   --radius: var(--radius);
   --color-background: var(--background);

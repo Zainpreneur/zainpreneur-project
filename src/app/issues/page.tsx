@@ -34,20 +34,20 @@ function IssueRowSkeleton() {
       <div className="flex flex-row items-start justify-between gap-3">
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-20 rounded-lg bg-muted shrink-0" />
-            <div className="h-8 w-6 rounded-lg bg-muted shrink-0" />
+            <div className="h-8 w-20 rounded-lg bg-gray-800 shrink-0" />
+            <div className="h-8 w-6 rounded-lg bg-gray-800 shrink-0" />
           </div>
-          <div className="h-4 w-3/4 rounded-md bg-muted shrink-0 mt-2" />
-          <p className="text-xs text-muted-foreground mt-1">
-            <span className="h-3 w-12 rounded-md bg-muted shrink-0" />
-            <span className="h-3 w-4 rounded-md bg-muted shrink-0" />
+          <div className="h-4 w-3/4 rounded-md bg-gray-800 shrink-0 mt-2" />
+          <p className="text-xs text-slate-400 mt-1">
+            <span className="h-3 w-12 rounded-md bg-gray-800 shrink-0" />
+            <span className="h-3 w-4 rounded-md bg-gray-800 shrink-0" />
           </p>
         </div>
-        <div className="h-8 w-8 rounded-md bg-muted shrink-0" />
+        <div className="h-8 w-8 rounded-md bg-gray-800 shrink-0" />
       </div>
-      <div className="flex items-center justify-between text-xs text-muted-foreground mt-2">
-        <span className="h-3 w-1/3 rounded-md bg-muted shrink-0" />
-        <span className="h-3 w-6 rounded-md bg-muted shrink-0" />
+      <div className="flex items-center justify-between text-xs text-slate-400 mt-2">
+        <span className="h-3 w-1/3 rounded-md bg-gray-800 shrink-0" />
+        <span className="h-3 w-6 rounded-md bg-gray-800 shrink-0" />
       </div>
     </div>
   );
@@ -79,7 +79,6 @@ export default function IssuesPage() {
   });
 
   useEffect(() => {
-    // Auto-sync on mount
     api.syncRepos()
       .then((res) => {
         toast({ title: "Auto-synced", description: `${res.syncedIssues} issues synced` });
@@ -87,7 +86,7 @@ export default function IssuesPage() {
       })
       .catch((err: any) => {
         toast({ title: "Sync failed", description: err?.message ?? "Failed to sync" });
-        loadData(); // Still try to load existing data
+        loadData();
       });
   }, []);
 
@@ -173,11 +172,11 @@ export default function IssuesPage() {
               <RefreshCw className="h-4 w-4 shrink-0 mr-2" /> Refresh
             </Button>
           </div>
-          <Card className="card-professional shadow-sm">
+          <Card className="card-elevated-dark shadow-sm">
             <CardContent className="p-6">
               <div className="flex flex-col sm:flex-row gap-4 items-end">
                 <div className="flex items-center gap-3">
-                  <Label className="text-xs font-medium">State</Label>
+                  <Label className="text-xs font-semibold text-slate-400">State</Label>
                   <Button
                     variant="outline"
                     size="sm"
@@ -193,7 +192,7 @@ export default function IssuesPage() {
                   </Button>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Label className="text-xs font-medium">Repository</Label>
+                  <Label className="text-xs font-semibold text-slate-400">Repository</Label>
                   <select
                     value={filter.repositoryId}
                     onChange={(e) => setFilter({ ...filter, repositoryId: e.target.value })}
@@ -210,9 +209,9 @@ export default function IssuesPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="card-professional shadow-sm">
+          <Card className="card-elevated-dark shadow-sm">
             <CardContent>
-              <div className="divide-y divide-input/50">
+              <div className="divide-y divide-white/10">
                 {[1, 2, 3, 4, 5].map((i) => (
                   <IssueRowSkeleton key={i} />
                 ))}
@@ -228,8 +227,8 @@ export default function IssuesPage() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tighter">Issues</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-3xl font-bold tracking-tighter text-[#F8FAFC]">Issues</h1>
+          <p className="text-slate-400 mt-1">
             Track and manage issues across all repositories
           </p>
         </div>
@@ -252,12 +251,11 @@ export default function IssuesPage() {
         </div>
       </div>
 
-      {/* Filters */}
-      <Card className="card-professional shadow-sm">
+      <Card className="card-elevated-dark shadow-sm">
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row gap-4 items-end">
             <div className="flex items-center gap-3">
-              <Label className="text-xs font-medium">State</Label>
+              <Label className="text-xs font-semibold text-slate-400">State</Label>
               <Button
                 variant="outline"
                 size="sm"
@@ -273,7 +271,7 @@ export default function IssuesPage() {
               </Button>
             </div>
             <div className="flex items-center gap-3">
-              <Label className="text-xs font-medium">Repository</Label>
+              <Label className="text-xs font-semibold text-slate-400">Repository</Label>
               <select
                 value={filter.repositoryId}
                 onChange={(e) => setFilter({ ...filter, repositoryId: e.target.value })}
@@ -291,129 +289,44 @@ export default function IssuesPage() {
         </CardContent>
       </Card>
 
-      {/* Create Issue Modal */}
-      {openCreate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setOpenCreate(false)} />
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="relative w-full max-w-md p-6"
-          >
-            <Card className="card-professional shadow-xl">
-              <CardHeader>
-                <CardTitle>Create New Issue</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleCreateIssue} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="repositoryId">Repository</Label>
-                    <select
-                      id="repositoryId"
-                      className="select-pro"
-                      value={form.repositoryId}
-                      onChange={(e) => setForm({ ...form, repositoryId: e.target.value })}
-                    >
-                      <option value="">Select repository</option>
-                      {repos.map((r) => (
-                        <option key={r.id} value={r.id}>
-                          {r.fullName}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="title">Title</Label>
-                    <Input
-                      id="title"
-                      placeholder="Issue title"
-                      value={form.title}
-                      onChange={(e) => setForm({ ...form, title: e.target.value })}
-                      className="input-pro"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="body">Body</Label>
-                    <textarea
-                      id="body"
-                      placeholder="Description..."
-                      value={form.body}
-                      onChange={(e) => setForm({ ...form, body: e.target.value })}
-                      className="input-pro h-32"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="labels">Labels (comma-separated)</Label>
-                    <Input
-                      id="labels"
-                      placeholder="bug, enhancement"
-                      value={form.labels}
-                      onChange={(e) => setForm({ ...form, labels: e.target.value })}
-                      className="input-pro"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="assignees">Assignees (comma-separated)</Label>
-                    <Input
-                      id="assignees"
-                      placeholder="user1, user2"
-                      value={form.assignees}
-                      onChange={(e) => setForm({ ...form, assignees: e.target.value })}
-                      className="input-pro"
-                    />
-                  </div>
-                </form>
-              </CardContent>
-              <CardFooter className="flex justify-end gap-2 p-6">
-                <Button variant="outline" onClick={() => setOpenCreate(false)} className="btn-professional">
-                  Cancel
-                </Button>
-                <Button onClick={handleCreateIssue} disabled={createLoading} className="btn-professional px-6">
-                  {createLoading ? "Creating..." : "Create Issue"}
-                </Button>
-              </CardFooter>
-            </Card>
-          </motion.div>
-        </div>
-      )}
-
-      {/* Issues List */}
-      <Card className="card-professional shadow-sm">
+      <Card className="card-elevated-dark shadow-sm">
         <CardContent>
           {filtered.length === 0 ? (
-            <div className="text-center py-16">
-              <FileText className="h-12 w-12 shrink-0 text-muted-foreground mb-4" />
-              <h3 className="text-sm font-semibold">No issues</h3>
-              <p className="text-muted-foreground text-sm">
+            <div className="flex flex-col items-center justify-center py-16 text-center space-y-3">
+              <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center text-slate-400 shrink-0 mb-4">
+                <FileText className="h-8 w-8 shrink-0" />
+              </div>
+              <h3 className="text-sm font-semibold text-[#F8FAFC]">No issues</h3>
+              <p className="text-xs text-slate-400">
                 No issues match your current filters.
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-input/50">
+            <div className="divide-y divide-white/10">
               {filtered.map((issue) => (
                 <motion.div
                   key={issue.id}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="flex flex-col gap-2 p-4 hover:bg-accent/30 rounded-lg transition-colors cursor-pointer group"
+                  className="flex flex-col gap-2 p-4 hover:bg-white/[0.02] rounded-lg transition-colors cursor-pointer group"
                 >
                   <div className="flex flex-row items-start justify-between gap-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <Badge
                           variant={issue.state === "open" ? "default" : "secondary"}
-                          className="text-xs font-medium"
+                          className="text-xs font-semibold"
                         >
                           {issue.state}
                         </Badge>
                         {issue.source === "local" && (
-                          <Badge variant="outline" className="text-xs font-medium">
+                          <Badge variant="outline" className="text-xs font-semibold">
                             Local
                           </Badge>
                         )}
                       </div>
-                      <h3 className="text-sm font-semibold">{issue.title}</h3>
-                      <p className="text-xs text-muted-foreground mt-1">
+                      <h3 className="text-sm font-semibold text-[#F8FAFC]">{issue.title}</h3>
+                      <p className="text-xs text-slate-400 mt-1">
                         #{issue.number ?? "-"} • Repository #{issue.repositoryId}
                       </p>
                     </div>
@@ -426,7 +339,7 @@ export default function IssuesPage() {
                       {issue.state === "open" ? "Close" : "Reopen"}
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between text-xs text-muted-foreground mt-2">
+                  <div className="flex items-center justify-between text-xs text-slate-400 mt-2">
                     <span>{issue.author ?? "unknown"}</span>
                     <ChevronRight className="h-3 w-3 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
@@ -435,8 +348,8 @@ export default function IssuesPage() {
             </div>
           )}
         </CardContent>
-        <CardFooter className="pt-4 border-t border-input/50">
-          <a href="/" className="text-sm text-primary hover:underline">
+        <CardFooter className="pt-4 border-t border-white/10">
+          <a href="/" className="text-xs text-indigo-400 hover:underline">
             View Dashboard →
           </a>
         </CardFooter>

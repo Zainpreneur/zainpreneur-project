@@ -26,7 +26,6 @@ export default function ReposPage() {
   const [syncing, setSyncing] = React.useState(false);
 
   useEffect(() => {
-    // Auto-sync on mount
     api.syncRepos()
       .then((res) => {
         toast({ title: "Auto-synced", description: `${res.syncedRepos} repos synced` });
@@ -34,7 +33,7 @@ export default function ReposPage() {
       })
       .catch((err: any) => {
         toast({ title: "Sync failed", description: err?.message ?? "Failed to sync" });
-        loadRepos(); // Still try to load existing data
+        loadRepos();
       });
   }, []);
 
@@ -59,7 +58,10 @@ export default function ReposPage() {
   if (loading) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
-        <RefreshCw className="h-8 w-8 shrink-0 animate-spin" />
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-gray-800 animate-pulse shrink-0" />
+          <p className="text-sm text-slate-400">Loading repositories…</p>
+        </div>
       </div>
     );
   }
@@ -68,15 +70,15 @@ export default function ReposPage() {
     <div className="space-y-6 max-w-full overflow-x-hidden">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tighter">Repositories</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-3xl font-bold tracking-tighter text-[#F8FAFC]">Repositories</h1>
+          <p className="text-slate-400 mt-1">
             All your team's GitHub repositories synced locally
           </p>
         </div>
         <div className="flex items-center gap-3">
           <div className="relative w-full md:w-96">
             <div className="absolute inset-y-0 left-3 pl-3 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-muted-foreground shrink-0" />
+              <Search className="h-4 w-4 text-slate-400 shrink-0" />
             </div>
             <Input
               placeholder="Search repositories..."
@@ -103,40 +105,42 @@ export default function ReposPage() {
         </div>
       </div>
 
-      <Card className="card-professional shadow-sm overflow-hidden">
+      <Card className="card-elevated-dark shadow-sm overflow-hidden">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-input/50 bg-muted/30 text-xs uppercase tracking-wider text-muted-foreground">
-                  <th className="p-6 font-medium">Repository</th>
-                  <th className="p-6 font-medium text-right">Stars</th>
-                  <th className="p-6 font-medium text-right">Forks</th>
-                  <th className="p-6 font-medium text-right">Issues</th>
-                  <th className="p-6 font-medium text-right">Size</th>
-                  <th className="p-6 font-medium">Language</th>
-                  <th className="p-6 font-medium">Visibility</th>
-                  <th className="p-6 font-medium text-right">Actions</th>
+                <tr className="border-b border-white/10 bg-gray-800/50 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  <th className="p-6">Repository</th>
+                  <th className="p-6 text-right">Stars</th>
+                  <th className="p-6 text-right">Forks</th>
+                  <th className="p-6 text-right">Issues</th>
+                  <th className="p-6 text-right">Size</th>
+                  <th className="p-6">Language</th>
+                  <th className="p-6">Visibility</th>
+                  <th className="p-6 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.length === 0 ? (
                   <tr>
                     <td colSpan={8} className="p-16 flex flex-col items-center justify-center text-center space-y-3 py-12">
-                      <Folder className="h-12 w-12 shrink-0 text-muted-foreground mb-4" />
-                      <h3 className="text-sm font-semibold">No repositories match</h3>
-                      <p className="text-xs">Try adjusting your search or wait for auto-sync to complete.</p>
+                      <div className="w-20 h-20 rounded-full bg-gray-800 flex items-center justify-center text-slate-400 shrink-0 mb-4">
+                        <Folder className="h-10 w-10 shrink-0" />
+                      </div>
+                      <h3 className="text-sm font-semibold text-[#F8FAFC]">No repositories match</h3>
+                      <p className="text-xs text-slate-400">Try adjusting your search or wait for auto-sync to complete.</p>
                     </td>
                   </tr>
                 ) : (
                   filtered.map((repo) => (
                     <tr
                       key={repo.id}
-                      className="border-b border-input/50 hover:bg-accent/30 transition-colors group"
+                      className="border-b border-white/10 hover:bg-white/[0.02] transition-colors group"
                     >
                       <td className="p-6">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-xs font-medium shrink-0">
+                          <div className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center text-xs font-medium shrink-0">
                             {repo.language?.[0] ?? "?"}
                           </div>
                           <div className="flex flex-col min-w-0">
@@ -144,31 +148,31 @@ export default function ReposPage() {
                               href={repo.htmlUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-sm font-medium truncate hover:underline"
+                              className="text-sm font-semibold truncate text-[#F8FAFC] hover:text-indigo-400"
                             >
                               {repo.fullName}
                             </a>
-                            <span className="text-xs text-muted-foreground truncate">
+                            <span className="text-xs text-slate-400 truncate">
                               {repo.description ?? "No description"}
                             </span>
                           </div>
                         </div>
                       </td>
                       <td className="p-6 text-right">
-                        <span className="text-sm font-medium">{repo.stars}</span>
-                        <Star className="h-3 w-3 shrink-0 text-yellow-500 ml-1" />
+                        <span className="text-sm font-semibold text-[#F8FAFC]">{repo.stars}</span>
+                        <Star className="h-3 w-3 shrink-0 text-yellow-400 ml-1" />
                       </td>
-                      <td className="p-6 text-right text-muted-foreground">
+                      <td className="p-6 text-right text-slate-400">
                         {repo.forks}
                       </td>
-                      <td className="p-6 text-right text-muted-foreground">
+                      <td className="p-6 text-right text-slate-400">
                         {repo.openIssues}
                       </td>
-                      <td className="p-6 text-right text-muted-foreground">
+                      <td className="p-6 text-right text-slate-400">
                         {(repo.size / 1024).toFixed(1)} MB
                       </td>
                       <td className="p-6">
-                        <span className="text-xs font-medium text-muted-foreground">
+                        <span className="text-xs font-medium text-slate-400">
                           {repo.language ?? "Unknown"}
                         </span>
                       </td>
@@ -185,7 +189,7 @@ export default function ReposPage() {
                           href={repo.htmlUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-xs text-primary hover:underline flex items-center gap-1"
+                          className="text-xs text-indigo-400 hover:underline flex items-center gap-1"
                         >
                           View on GitHub <ChevronRight className="h-3 w-3 shrink-0" />
                         </a>
@@ -197,13 +201,13 @@ export default function ReposPage() {
             </table>
           </div>
         </CardContent>
-        <CardFooter className="border-t border-input/50 bg-muted/30 p-6">
+        <CardFooter className="border-t border-white/10 bg-gray-800/50 p-6">
           <div className="flex items-center justify-between gap-4">
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs text-slate-400">
               {filtered.length} of {repos.length} repositories
             </span>
-            <span className="text-xs text-muted-foreground text-right">
-              Total stars: <span className="text-yellow-500 font-medium">{repos.reduce((sum: number, r: any) => sum + (r.stars ?? 0), 0)}</span>
+            <span className="text-xs text-slate-400 text-right">
+              Total stars: <span className="text-yellow-400 font-semibold">{repos.reduce((sum: number, r: any) => sum + (r.stars ?? 0), 0)}</span>
             </span>
           </div>
         </CardFooter>
