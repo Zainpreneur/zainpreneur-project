@@ -9,6 +9,7 @@ import {
   User,
   Folder,
   Activity,
+  X,
 } from "lucide-react";
 
 const navigation = [
@@ -21,15 +22,20 @@ const navigation = [
 
 interface SidebarProps {
   isCollapsed?: boolean;
+  isMobileMenuOpen?: boolean;
   onToggle: () => void;
 }
 
-export function Sidebar({ isCollapsed = false, onToggle }: SidebarProps) {
+export function Sidebar({ isCollapsed = false, isMobileMenuOpen = false, onToggle }: SidebarProps) {
   return (
     <aside
       className={cn(
         "fixed left-0 top-0 bottom-0 z-40 border-r border-input/50 bg-background/80 backdrop-blur-md transition-all duration-300",
-        isCollapsed ? "w-16 -ml-60" : "w-64 ml-0",
+        isMobileMenuOpen
+          ? "w-64 transform translate-x-0 md:translate-x-0"
+          : isCollapsed
+            ? "w-16 -ml-60 transform translate-x-0"
+            : "w-64 ml-0",
       )}
     >
       <div className="flex h-full flex-col">
@@ -48,7 +54,7 @@ export function Sidebar({ isCollapsed = false, onToggle }: SidebarProps) {
             className="rounded-md p-1.5 md:hidden text-muted-foreground hover:bg-accent hover:text-accent-foreground"
             aria-label="Toggle sidebar"
           >
-            <ChevronLeft className={cn("h-4 w-4", isCollapsed && "-rotate-180")} />
+            {isMobileMenuOpen ? <X className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </button>
         </div>
 
@@ -60,6 +66,11 @@ export function Sidebar({ isCollapsed = false, onToggle }: SidebarProps) {
               <Link
                 key={item.name}
                 href={item.href}
+                onClick={() => {
+                  if (typeof window !== "undefined" && window.innerWidth < 768) {
+                    onToggle();
+                  }
+                }}
                 className={cn(
                   "flex items-center rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
                   "text-muted-foreground hover:bg-accent hover:text-accent-foreground",

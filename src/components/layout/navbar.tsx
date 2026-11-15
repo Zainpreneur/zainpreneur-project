@@ -10,6 +10,8 @@ import {
   Search,
   GitBranch,
   User as UserIcon,
+  Menu,
+  ChevronLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,9 +20,11 @@ interface NavbarProps {
   user?: { login: string; avatar_url?: string } | null;
   onThemeToggle: () => void;
   theme: "light" | "dark" | "system";
+  onSidebarToggle: () => void;
+  isCollapsed: boolean;
 }
 
-export function Navbar({ user, onThemeToggle, theme }: NavbarProps) {
+export function Navbar({ user, onThemeToggle, theme, onSidebarToggle, isCollapsed }: NavbarProps) {
   const isDark =
     theme === "dark" ||
     (theme === "system" &&
@@ -29,13 +33,18 @@ export function Navbar({ user, onThemeToggle, theme }: NavbarProps) {
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center border-b border-input/50 bg-background/80 backdrop-blur-md">
-      {/* Left: brand */}
+      {/* Left: brand + mobile menu toggle */}
       <div className="flex items-center gap-4 px-4">
+        <button
+          onClick={onSidebarToggle}
+          className="md:hidden rounded-lg p-1.5 text-muted-foreground hover:bg-accent"
+          aria-label="Toggle sidebar"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
         <Link href="/dashboard" className="flex items-center gap-2">
           <GitBranch className="h-5 w-5 text-primary" />
-          <span className="text-xl font-bold tracking-tight text-primary">
-            Zainpreneur
-          </span>
+          <span className="text-xl font-bold tracking-tight text-primary">Zainpreneur</span>
         </Link>
       </div>
 
