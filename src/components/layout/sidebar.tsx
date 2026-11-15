@@ -32,33 +32,30 @@ export function Sidebar({ isCollapsed = false, isMobileMenuOpen = false, onToggl
   return (
     <aside
       className={cn(
-        "fixed left-0 top-0 bottom-0 z-50 border-r border-input/50 bg-background/80 backdrop-blur-2xl transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]",
+        "fixed left-0 top-0 bottom-0 z-50 border-r border-input bg-background transition-all duration-300",
         isMobileMenuOpen
-          ? "w-72 transform translate-x-0 md:translate-x-0 shadow-2xl"
+          ? "w-72 transform translate-x-0 md:translate-x-0 shadow-xl"
           : isCollapsed
             ? "w-20 -ml-full transform translate-x-0 md:translate-x-0 shadow-lg"
             : "w-72 ml-0 shadow-lg",
       )}
     >
-      <div className="flex h-full flex-col relative">
-        {/* Organic gradient accent */}
-        <div className="absolute inset-y-0 right-0 w-1 bg-gradient-to-b from-transparent via-primary/50 to-transparent" />
-
+      <div className="flex h-full flex-col">
         {/* Header */}
-        <div className={cn("flex items-center justify-between h-16 px-6 border-b border-input/30", isCollapsed && "justify-center")}>
+        <div className={cn("flex items-center justify-between h-16 px-4 border-b border-input", isCollapsed && "justify-center")}>
           {!isCollapsed && (
-            <div className="flex items-center gap-3 group cursor-pointer">
-              <div className="w-10 h-10 rounded-liquid bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-white shadow-lg shadow-primary/25 group-hover:shadow-primary/40 transition-all duration-300">
+            <div className="flex items-center gap-2.5 group">
+              <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-white shadow-sm shadow-primary/20">
                 <GitBranch className="h-5 w-5" />
               </div>
-              <span className="text-xl font-bold tracking-tight text-primary group-hover:text-primary/80 transition-colors">
+              <span className="text-xl font-bold tracking-tight text-foreground group-hover:text-primary/80 transition-colors">
                 Zainpreneur
               </span>
             </div>
           )}
           <button
             onClick={onToggle}
-            className="rounded-liquid p-2 md:hidden text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-300"
+            className="rounded-lg p-2 md:hidden text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
             aria-label="Toggle sidebar"
           >
             {isMobileMenuOpen ? <X className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
@@ -68,7 +65,7 @@ export function Sidebar({ isCollapsed = false, isMobileMenuOpen = false, onToggl
             <button
               onClick={onToggle}
               className={cn(
-                "absolute right-3 top-1/2 -translate-y-1/2 rounded-liquid p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-300",
+                "absolute right-2.5 top-1/2 -translate-y-1/2 rounded-lg p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors",
                 isCollapsed ? "rotate-180" : "",
               )}
               aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
@@ -92,13 +89,13 @@ export function Sidebar({ isCollapsed = false, isMobileMenuOpen = false, onToggl
                   }
                 }}
                 className={cn(
-                  "flex items-center rounded-liquid-2 px-4 py-3 text-sm font-medium transition-all duration-300",
+                  "flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
                   "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
                   isCollapsed ? "justify-center px-2" : "",
                 )}
               >
                 <div className={cn(
-                  "w-10 h-10 rounded-liquid flex items-center justify-center shrink-0 transition-all duration-300",
+                  "w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200",
                   isCollapsed ? "" : "bg-muted text-muted-foreground hover:bg-primary hover:text-primary",
                 )}>
                   <Icon className={cn("h-5 w-5", isCollapsed ? "mx-auto" : "mr-3")} />
@@ -111,14 +108,14 @@ export function Sidebar({ isCollapsed = false, isMobileMenuOpen = false, onToggl
 
         {/* Divider */}
         {!isCollapsed && (
-          <div className="mx-6 my-4 h-[1px] bg-gradient-to-r from-transparent via-input/50 to-transparent" />
+          <div className="mx-4 my-4 h-[1px] bg-border" />
         )}
 
         {/* Quick Stats - Desktop only */}
         {!isCollapsed && (
           <div className="p-4 space-y-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-liquid bg-primary/10 flex items-center justify-center text-primary">
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
                 <ShieldCheck className="h-5 w-5" />
               </div>
               <div>
@@ -127,7 +124,7 @@ export function Sidebar({ isCollapsed = false, isMobileMenuOpen = false, onToggl
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-liquid bg-accent flex items-center justify-center text-accent-foreground">
+              <div className="w-10 h-10 rounded-lg bg-accent flex items-center justify-center text-accent-foreground">
                 <Star className="h-5 w-5" />
               </div>
               <div>
@@ -139,7 +136,7 @@ export function Sidebar({ isCollapsed = false, isMobileMenuOpen = false, onToggl
         )}
 
         {/* Footer - connected status */}
-        <div className="p-4 border-t border-input/30 bg-muted/20">
+        <div className="p-4 border-t border-input bg-muted/30">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground overflow-hidden border border-input/50">
               <User className="h-5 w-5" />
@@ -150,7 +147,7 @@ export function Sidebar({ isCollapsed = false, isMobileMenuOpen = false, onToggl
             </div>
           </div>
           {!isCollapsed && (
-            <div className="mt-4 pt-4 border-t border-input/30">
+            <div className="mt-4 pt-4 border-t border-input">
               <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                 Zainpreneur OS
               </p>
@@ -161,3 +158,4 @@ export function Sidebar({ isCollapsed = false, isMobileMenuOpen = false, onToggl
     </aside>
   );
 }
+

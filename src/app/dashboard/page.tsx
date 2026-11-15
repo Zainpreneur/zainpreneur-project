@@ -58,32 +58,32 @@ function StatCard({
   } as const;
 
   const colorMap: Record<string, string> = {
-    blue: "from-blue-500 to-blue-500/60",
-    yellow: "from-yellow-500 to-yellow-500/60",
-    rose: "from-rose-500 to-rose-500/60",
-    emerald: "from-emerald-500 to-emerald-500/60",
-    amber: "from-amber-500 to-amber-500/60",
+    blue: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+    yellow: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
+    rose: "bg-rose-500/10 text-rose-500 border-rose-500/20",
+    emerald: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
+    amber: "bg-amber-500/10 text-amber-500 border-amber-500/20",
   };
 
   return (
     <motion.div
-      whileHover={{ y: -8 }}
+      whileHover={{ y: -4 }}
       className={cn(
-        "rounded-liquid-3 border border-input/50 bg-gradient-to-br from-background to-card p-6 shadow-lg shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] transition-all duration-500",
+        "rounded-xl border border-input/50 bg-card p-6 shadow-sm transition-all duration-300",
         color && `border-${color}/20`,
       )}
     >
       <div className="flex flex-row items-center justify-between">
         <div className="flex flex-col gap-1">
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{title}</p>
-          <p className="text-3xl font-bold tracking-tight">{value}</p>
+          <p className="text-2xl font-bold tracking-tight">{value}</p>
           {description && (
             <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
           )}
         </div>
-        <div className="w-12 h-12 rounded-liquid-2 flex items-center justify-center">
-          <div className={`w-full h-full rounded-liquid-2 ${colorMap[color as keyof typeof colorMap] ?? "from-primary to-primary/60"} flex items-center justify-center shadow-lg`}>
-            <Icon className={cn("h-6 w-6 text-white", trendColors[trend].split(" ")[1])} />
+        <div className="w-10 h-10 rounded-lg flex items-center justify-center">
+          <div className={`w-full h-full rounded-lg ${colorMap[color as keyof typeof colorMap] ?? "bg-blue-500/10 text-blue-500 border-blue-500/20"} flex items-center justify-center shadow-sm`}>
+            <Icon className={cn("h-5 w-5", trendColors[trend].split(" ")[1])} />
           </div>
         </div>
       </div>
@@ -111,8 +111,8 @@ function HealthGauge({ score }: { score: number }) {
     score >= 80 ? "Excellent" : score >= 60 ? "Good" : score >= 40 ? "Fair" : "Needs Attention";
 
   return (
-    <Card className="rounded-liquid-3 border border-input/50 shadow-lg overflow-hidden relative group">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+    <Card className="rounded-xl border border-input/50 shadow-lg overflow-hidden relative group">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       <CardHeader className="flex flex-row items-center justify-between pb-4">
         <div className="flex items-center gap-3">
           <ShieldCheck className="h-6 w-6 text-primary" />
@@ -124,7 +124,7 @@ function HealthGauge({ score }: { score: number }) {
           </div>
         </div>
         <div className="text-right">
-          <div className="text-5xl font-bold tracking-tighter">{score}</div>
+          <div className="text-4xl font-bold tracking-tighter">{score}</div>
           <div className={cn("text-xs font-semibold uppercase tracking-wider", colorClass.split(" ")[0])}>
             {label}
           </div>
@@ -243,7 +243,7 @@ export default function DashboardPage() {
                 loadData();
               });
             }}
-            className="btn-gradient rounded-liquid px-6 py-3 text-sm font-medium"
+            className="btn-professional"
           >
             <RefreshCw className="h-4 w-4 mr-2" /> Sync Now
           </Button>
@@ -303,10 +303,10 @@ export default function DashboardPage() {
         transition={{ delay: 0.4 }}
         className="grid grid-cols-1 md:grid-cols-3 gap-4"
       >
-        <Card className="rounded-liquid-3 border border-input hover:border-primary/50 transition-all cursor-pointer group shadow-sm">
+        <Card className="card-professional hover:border-primary/50 transition-all cursor-pointer group shadow-sm">
           <CardHeader className="pb-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-liquid bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary/20 transition-all">
+              <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                 <Folder className="h-5 w-5" />
               </div>
               <span className="text-sm font-medium">Browse Repositories</span>
@@ -325,10 +325,10 @@ export default function DashboardPage() {
             </a>
           </CardFooter>
         </Card>
-        <Card className="rounded-liquid-3 border border-input hover:border-blue-500/50 transition-all cursor-pointer group shadow-sm">
+        <Card className="card-professional hover:border-blue-500/50 transition-all cursor-pointer group shadow-sm">
           <CardHeader className="pb-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-liquid bg-blue-100 text-blue-600 flex items-center justify-center group-hover:bg-blue-200 transition-all">
+              <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center group-hover:bg-blue-200 transition-colors">
                 <FileText className="h-5 w-5" />
               </div>
               <span className="text-sm font-medium">Manage Issues</span>
@@ -347,10 +347,10 @@ export default function DashboardPage() {
             </a>
           </CardFooter>
         </Card>
-        <Card className="rounded-liquid-3 border border-input hover:border-purple-500/50 transition-all cursor-pointer group shadow-sm">
+        <Card className="card-professional hover:border-purple-500/50 transition-all cursor-pointer group shadow-sm">
           <CardHeader className="pb-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-liquid bg-purple-100 text-purple-600 flex items-center justify-center group-hover:bg-purple-200 transition-all">
+              <div className="w-10 h-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center group-hover:bg-purple-200 transition-colors">
                 <GitPullRequest className="h-5 w-5" />
               </div>
               <span className="text-sm font-medium">Review Pull Requests</span>
@@ -377,7 +377,7 @@ export default function DashboardPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
       >
-        <Card className="rounded-liquid-3 shadow-sm border border-input">
+        <Card className="card-professional shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-4">
             <CardTitle className="text-sm font-semibold">Recent Activity</CardTitle>
             <a href="/repos" className="text-xs text-primary hover:underline">
@@ -388,7 +388,7 @@ export default function DashboardPage() {
             {loading ? (
               <div className="space-y-3 py-4">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-4 w-3/4 rounded-liquid bg-muted animate-pulse" />
+                  <div key={i} className="h-4 w-3/4 rounded-md bg-muted animate-pulse" />
                 ))}
               </div>
             ) : repos.length === 0 ? (
@@ -400,7 +400,7 @@ export default function DashboardPage() {
                 </p>
                 <Button
                   onClick={() => api.syncRepos().then(() => loadData())}
-                  className="btn-gradient rounded-liquid px-6 py-3 text-sm font-medium mt-4"
+                  className="btn-professional mt-4"
                 >
                   <RefreshCw className="h-4 w-4 mr-2" /> Sync Repositories
                 </Button>
@@ -410,7 +410,7 @@ export default function DashboardPage() {
                 {repos.slice(0, 6).map((repo) => (
                   <div
                     key={repo.id}
-                    className="flex items-center justify-between p-4 hover:bg-accent/30 rounded-liquid-2 transition-colors cursor-pointer group"
+                    className="flex items-center justify-between p-4 hover:bg-accent/30 rounded-lg transition-colors cursor-pointer group"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-xs font-medium">
@@ -445,3 +445,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+

@@ -76,3 +76,4 @@ export interface ProvidersProps {
 export function Providers({ children }: ProvidersProps) {
   return <ThemeProvider>{children}</ThemeProvider>;
 }
+

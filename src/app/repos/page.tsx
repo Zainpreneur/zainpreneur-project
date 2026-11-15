@@ -72,19 +72,19 @@ export default function ReposPage() {
               placeholder="Search repositories..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 bg-background/30 border-input/50 rounded-liquid focus:border-primary focus:ring-2 focus:ring-primary/20"
+              className="pl-10 input-pro"
             />
           </div>
           <Button
             onClick={() => loadRepos()}
-            className="btn-gradient rounded-liquid px-6 py-3 text-sm font-medium"
+            className="btn-professional"
           >
             <RefreshCw className="h-4 w-4 mr-2" /> Refresh
           </Button>
         </div>
       </div>
 
-      <Card className="rounded-liquid-3 shadow-sm border border-input overflow-hidden">
+      <Card className="card-professional shadow-sm overflow-hidden">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left">
@@ -117,7 +117,7 @@ export default function ReposPage() {
                     >
                       <td className="p-6">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-xs font-medium">
+                          <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-xs font-medium">
                             {repo.language?.[0] ?? "?"}
                           </div>
                           <div className="flex flex-col min-w-0">
@@ -193,3 +193,4 @@ export default function ReposPage() {
     </div>
   );
 }
+
