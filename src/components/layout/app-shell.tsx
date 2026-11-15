@@ -33,12 +33,15 @@ export function AppShell({ children }: AppShellProps) {
       />
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 z-49 bg-black/60 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-49 bg-black/60 backdrop-blur-xl md:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
           aria-hidden="true"
         />
       )}
       <div className="flex flex-1 min-h-[calc(100vh-3.5rem)] relative">
+        <div className="liquid-blob liquid-blob-1" />
+        <div className="liquid-blob liquid-blob-2" />
+        <div className="liquid-blob liquid-blob-3" />
         <Sidebar
           isCollapsed={isCollapsed}
           isMobileMenuOpen={isMobileMenuOpen}
@@ -46,7 +49,7 @@ export function AppShell({ children }: AppShellProps) {
         />
         <main
           className={cn(
-            "flex-1 overflow-y-auto p-6 lg:p-8 transition-all duration-500",
+            "flex-1 overflow-y-auto p-6 lg:p-8 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]",
             isCollapsed ? "lg:pl-0" : "lg:pl-20",
           )}
         >

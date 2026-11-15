@@ -70,7 +70,7 @@ export default function PullRequestsPage() {
         <p className="text-muted-foreground max-w-sm mx-auto">
           Sync your repositories to see pull requests here.
         </p>
-        <Button onClick={() => loadData()}>
+        <Button onClick={() => loadData()} className="btn-gradient rounded-liquid px-6 py-3 text-sm font-medium">
           <RefreshCw className="h-4 w-4 mr-2" /> Refresh
         </Button>
       </div>
@@ -81,19 +81,19 @@ export default function PullRequestsPage() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Pull Requests</h1>
+          <h1 className="text-3xl font-bold tracking-tighter">Pull Requests</h1>
           <p className="text-muted-foreground mt-1">
             Monitor and manage pull requests across all repositories
           </p>
         </div>
-        <Button onClick={() => loadData()}>
+        <Button onClick={() => loadData()} className="btn-gradient rounded-liquid px-6 py-3 text-sm font-medium">
           <RefreshCw className="h-4 w-4 mr-2" /> Refresh
         </Button>
       </div>
 
       {/* Filters */}
-      <Card className="rounded-3xl border border-input shadow-sm">
-        <CardContent className="p-5">
+      <Card className="rounded-liquid-3 border border-input shadow-sm">
+        <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row gap-4 items-end">
             <div className="flex items-center gap-3">
               <Label className="text-xs font-medium">State</Label>
@@ -107,7 +107,7 @@ export default function PullRequestsPage() {
                       filter.state === "all" ? "open" : filter.state === "open" ? "merged" : "all",
                   })
                 }
-                className="h-9 px-3"
+                className="h-9 px-4 rounded-liquid"
               >
                 {filter.state === "all" ? "Open Only" : filter.state === "open" ? "Merged" : "All"}
               </Button>
@@ -130,7 +130,7 @@ export default function PullRequestsPage() {
       </Card>
 
       {/* PRs List */}
-      <Card className="rounded-3xl border border-input shadow-sm">
+      <Card className="rounded-liquid-3 border border-input shadow-sm">
         <CardContent>
           <div className="divide-y divide-input/50">
             {filtered.map((pr) => (
@@ -138,7 +138,7 @@ export default function PullRequestsPage() {
                 key={pr.id}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="flex flex-col gap-2 p-4 hover:bg-muted/50 transition-colors"
+                className="flex flex-col gap-2 p-4 hover:bg-accent/30 rounded-liquid-2 transition-colors"
               >
                 <div className="flex flex-row items-start justify-between gap-3">
                   <div className="flex-1">

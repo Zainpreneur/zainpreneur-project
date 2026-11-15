@@ -74,12 +74,181 @@
   }
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+/* --------------------------------------------------------------
+   Liquid Morphism Utilities
+   -------------------------------------------------------------- */
+
+/* Organic blob shapes with animated gradients */
+.liquid-blob {
+  position: absolute;
+  filter: blur(80px);
+  opacity: 0.4;
+  z-index: 0;
+  animation: blob-move 10s infinite alternate;
+}
+
+.liquid-blob-1 {
+  top: -10%;
+  left: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle at 30% 30%, rgba(99, 102, 241, 0.5), transparent 70%);
+  animation-delay: 0s;
+}
+
+.liquid-blob-2 {
+  bottom: -10%;
+  right: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle at 70% 70%, rgba(168, 85, 247, 0.4), transparent 70%);
+  animation-delay: -3s;
+}
+
+.liquid-blob-3 {
+  top: 40%;
+  left: 40%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.3), transparent 70%);
+  animation-delay: -6s;
+}
+
+@keyframes blob-move {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+  33% {
+    transform: translate(20px, -30px) scale(1.1) rotate(10deg);
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+  }
+  66% {
+    transform: translate(-20px, 30px) scale(0.9) rotate(-10deg);
+    border-radius: 70% 30% 40% 60% / 30% 50% 60% 40%;
+  }
+  100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
   }
 }
 
+/* Organic border-radius values (liquid shapes) */
+.rounded-liquid {
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+}
+
+.rounded-liquid-2 {
+  border-radius: 40% 60% 70% 50% / 50% 60% 30% 40%;
+}
+
+.rounded-liquid-3 {
+  border-radius: 70% 30% 50% 60% / 40% 70% 30% 60%;
+}
+
+/* Glassmorphism with liquid depth */
+.glass {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+}
+
+.dark .glass {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Gradient text */
+.text-gradient {
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Liquid card with animated gradient border */
+.liquid-card {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.dark .liquid-card {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.liquid-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.5),
+    rgba(168, 85, 247, 0.5),
+    rgba(6, 182, 212, 0.5)
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.dark .liquid-card::before {
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.3),
+    rgba(168, 85, 247, 0.3),
+    rgba(6, 182, 212, 0.3)
+  );
+}
+
+.liquid-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Gradient button */
+.btn-gradient {
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-gradient:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.4), 0 10px 10px -5px rgba(99, 102, 241, 0.2);
+}
+
+/* Floating animation */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Pulse glow */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.6); }
+}
+
+.glow {
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+/* --------------------------------------------------------------
+   Theme overrides
+   -------------------------------------------------------------- */
 @theme inline {
   --radius: var(--radius);
   --color-background: var(--background);

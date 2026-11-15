@@ -138,24 +138,24 @@ export default function IssuesPage() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Issues</h1>
+          <h1 className="text-3xl font-bold tracking-tighter">Issues</h1>
           <p className="text-muted-foreground mt-1">
             Track and manage issues across all repositories
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button onClick={() => setOpenCreate(true)} disabled={repos.length === 0}>
+          <Button onClick={() => setOpenCreate(true)} disabled={repos.length === 0} className="btn-gradient rounded-liquid px-6 py-3 text-sm font-medium">
             <Plus className="h-4 w-4 mr-2" /> New Issue
           </Button>
-          <Button onClick={() => loadData()}>
+          <Button onClick={() => loadData()} className="btn-gradient rounded-liquid px-6 py-3 text-sm font-medium">
             <RefreshCw className="h-4 w-4 mr-2" /> Refresh
           </Button>
         </div>
       </div>
 
       {/* Filters */}
-      <Card className="rounded-3xl border border-input shadow-sm">
-        <CardContent className="p-5">
+      <Card className="rounded-liquid-3 border border-input shadow-sm">
+        <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row gap-4 items-end">
             <div className="flex items-center gap-3">
               <Label className="text-xs font-medium">State</Label>
@@ -168,7 +168,7 @@ export default function IssuesPage() {
                     state: filter.state === "all" ? "open" : "closed",
                   })
                 }
-                className="h-9 px-3"
+                className="h-9 px-4 rounded-liquid"
               >
                 {filter.state === "all" ? "Show Open" : "Show All"}
               </Button>
@@ -197,11 +197,11 @@ export default function IssuesPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setOpenCreate(false)} />
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             className="relative w-full max-w-md p-6"
           >
-            <Card className="rounded-3xl shadow-2xl">
+            <Card className="rounded-liquid-3 shadow-2xl border border-input">
               <CardHeader>
                 <CardTitle>Create New Issue</CardTitle>
               </CardHeader>
@@ -230,6 +230,7 @@ export default function IssuesPage() {
                       placeholder="Issue title"
                       value={form.title}
                       onChange={(e) => setForm({ ...form, title: e.target.value })}
+                      className="rounded-xl"
                     />
                   </div>
                   <div className="space-y-2">
@@ -249,6 +250,7 @@ export default function IssuesPage() {
                       placeholder="bug, enhancement"
                       value={form.labels}
                       onChange={(e) => setForm({ ...form, labels: e.target.value })}
+                      className="rounded-xl"
                     />
                   </div>
                   <div className="space-y-2">
@@ -258,15 +260,16 @@ export default function IssuesPage() {
                       placeholder="user1, user2"
                       value={form.assignees}
                       onChange={(e) => setForm({ ...form, assignees: e.target.value })}
+                      className="rounded-xl"
                     />
                   </div>
                 </form>
               </CardContent>
-              <CardFooter className="flex justify-end gap-2 p-5">
-                <Button variant="outline" onClick={() => setOpenCreate(false)}>
+              <CardFooter className="flex justify-end gap-2 p-6">
+                <Button variant="outline" onClick={() => setOpenCreate(false)} className="rounded-liquid">
                   Cancel
                 </Button>
-                <Button onClick={handleCreateIssue} disabled={createLoading}>
+                <Button onClick={handleCreateIssue} disabled={createLoading} className="btn-gradient rounded-liquid px-6">
                   {createLoading ? "Creating..." : "Create Issue"}
                 </Button>
               </CardFooter>
@@ -276,15 +279,15 @@ export default function IssuesPage() {
       )}
 
       {/* Issues List */}
-      <Card className="rounded-3xl border border-input shadow-sm">
+      <Card className="rounded-liquid-3 border border-input shadow-sm">
         <CardContent>
           {loading ? (
             <div className="h-[400px] flex items-center justify-center">
               <RefreshCw className="h-8 w-8 animate-spin" />
             </div>
           ) : filtered.length === 0 ? (
-            <div className="text-center py-12">
-              <FileText className="h-10 w-10 text-muted-foreground mb-4" />
+            <div className="text-center py-16">
+              <FileText className="h-12 w-12 text-muted-foreground mb-4" />
               <h3 className="text-sm font-semibold">No issues</h3>
               <p className="text-muted-foreground text-sm">
                 No issues match your current filters.
@@ -297,7 +300,7 @@ export default function IssuesPage() {
                   key={issue.id}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="flex flex-col gap-2 p-4 hover:bg-muted/50 transition-colors cursor-pointer group"
+                  className="flex flex-col gap-2 p-4 hover:bg-accent/30 rounded-liquid-2 transition-colors cursor-pointer group"
                 >
                   <div className="flex flex-row items-start justify-between gap-3">
                     <div className="flex-1">
@@ -323,7 +326,7 @@ export default function IssuesPage() {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleToggleIssue(issue.id, issue.state)}
-                      className="h-8 px-2"
+                      className="h-8 px-2 rounded-liquid"
                     >
                       {issue.state === "open" ? "Close" : "Reopen"}
                     </Button>

@@ -57,11 +57,19 @@ function StatCard({
     neutral: "text-muted-foreground bg-muted",
   } as const;
 
+  const colorMap: Record<string, string> = {
+    blue: "from-blue-500 to-blue-500/60",
+    yellow: "from-yellow-500 to-yellow-500/60",
+    rose: "from-rose-500 to-rose-500/60",
+    emerald: "from-emerald-500 to-emerald-500/60",
+    amber: "from-amber-500 to-amber-500/60",
+  };
+
   return (
     <motion.div
-      whileHover={{ y: -4 }}
+      whileHover={{ y: -8 }}
       className={cn(
-        "rounded-3xl border border-input/50 bg-gradient-to-b from-background to-card p-6 shadow-lg shadow-[0_20px_50px_-12px_rgba(0,0,0,0.25)] transition-all duration-300",
+        "rounded-liquid-3 border border-input/50 bg-gradient-to-br from-background to-card p-6 shadow-lg shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] transition-all duration-500",
         color && `border-${color}/20`,
       )}
     >
@@ -73,8 +81,10 @@ function StatCard({
             <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
           )}
         </div>
-        <div className="w-12 h-12 rounded-2xl flex items-center justify-center">
-          <Icon className={cn("h-6 w-6", trendColors[trend].split(" ")[1])} />
+        <div className="w-12 h-12 rounded-liquid-2 flex items-center justify-center">
+          <div className={`w-full h-full rounded-liquid-2 ${colorMap[color as keyof typeof colorMap] ?? "from-primary to-primary/60"} flex items-center justify-center shadow-lg`}>
+            <Icon className={cn("h-6 w-6 text-white", trendColors[trend].split(" ")[1])} />
+          </div>
         </div>
       </div>
       {change && (
@@ -90,7 +100,7 @@ function StatCard({
 
 function HealthGauge({ score }: { score: number }) {
   const getColor = (s: number) => {
-    if (s >= 80) return "text-emerald-500 bg-emerald-50 border-emerald-100";
+    if (s >= 80) return "text-emerald-500 bg-emerald-50 border-emerald-100 text-gradient";
     if (s >= 60) return "text-blue-500 bg-blue-50 border-blue-100";
     if (s >= 40) return "text-amber-500 bg-amber-50 border-amber-100";
     return "text-rose-500 bg-rose-50 border-rose-100";
@@ -101,20 +111,20 @@ function HealthGauge({ score }: { score: number }) {
     score >= 80 ? "Excellent" : score >= 60 ? "Good" : score >= 40 ? "Fair" : "Needs Attention";
 
   return (
-    <Card className="rounded-3xl border border-input/50 shadow-lg overflow-hidden relative group">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      <CardHeader className="flex flex-row items-center justify-between pb-3">
+    <Card className="rounded-liquid-3 border border-input/50 shadow-lg overflow-hidden relative group">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <CardHeader className="flex flex-row items-center justify-between pb-4">
         <div className="flex items-center gap-3">
           <ShieldCheck className="h-6 w-6 text-primary" />
           <div>
-            <CardTitle className="text-lg font-bold">Repository Health Score</CardTitle>
+            <CardTitle className="text-lg font-bold tracking-tight">Repository Health Score</CardTitle>
             <CardDescription>
               Composite score based on stars, activity, issues, and PRs
             </CardDescription>
           </div>
         </div>
         <div className="text-right">
-          <div className="text-4xl font-bold tracking-tight">{score}</div>
+          <div className="text-5xl font-bold tracking-tighter">{score}</div>
           <div className={cn("text-xs font-semibold uppercase tracking-wider", colorClass.split(" ")[0])}>
             {label}
           </div>
@@ -128,6 +138,7 @@ function HealthGauge({ score }: { score: number }) {
             icon={GitBranch}
             trend="neutral"
             description="Total synced"
+            color="blue"
           />
           <StatCard
             title="Total Stars"
@@ -135,6 +146,7 @@ function HealthGauge({ score }: { score: number }) {
             icon={Star}
             trend="up"
             description="Across repos"
+            color="yellow"
           />
           <StatCard
             title="Open Issues"
@@ -142,6 +154,7 @@ function HealthGauge({ score }: { score: number }) {
             icon={FileText}
             trend="down"
             description="Needs attention"
+            color="rose"
           />
           <StatCard
             title="Open Pulls"
@@ -149,6 +162,7 @@ function HealthGauge({ score }: { score: number }) {
             icon={GitPullRequest}
             trend="down"
             description="Pending review"
+            color="amber"
           />
         </div>
       </CardContent>
@@ -204,19 +218,19 @@ export default function DashboardPage() {
 
   const openIssues = issues.filter((i) => i.state === "open").length;
   const openPRs = prs.filter((p) => p.state === "open").length;
-  const totalStars = repos.reduce((sum, r) => sum + (r.stars ?? 0), 0);
-  const totalForks = repos.reduce((sum, r) => sum + (r.forks ?? 0), 0);
+  const totalStars = repos.reduce((sum: number, r: any) => sum + (r.stars ?? 0), 0);
+  const totalForks = repos.reduce((sum: number, r: any) => sum + (r.forks ?? 0), 0);
 
   return (
     <div className="space-y-8">
       {/* Header */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
       >
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tighter">Dashboard</h1>
           <p className="text-muted-foreground">
             Overview of your team's GitHub repositories and activity
           </p>
@@ -229,6 +243,7 @@ export default function DashboardPage() {
                 loadData();
               });
             }}
+            className="btn-gradient rounded-liquid px-6 py-3 text-sm font-medium"
           >
             <RefreshCw className="h-4 w-4 mr-2" /> Sync Now
           </Button>
@@ -237,18 +252,18 @@ export default function DashboardPage() {
 
       {/* Health Score Card */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
+        transition={{ delay: 0.2 }}
       >
         <HealthGauge score={healthScore} />
       </motion.div>
 
       {/* Stats Grid */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
+        transition={{ delay: 0.3 }}
         className="grid gap-4 md:grid-cols-4"
       >
         <StatCard
@@ -283,15 +298,15 @@ export default function DashboardPage() {
 
       {/* Quick Actions */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
+        transition={{ delay: 0.4 }}
         className="grid grid-cols-1 md:grid-cols-3 gap-4"
       >
-        <Card className="rounded-3xl border border-input hover:border-primary/50 transition-all cursor-pointer group shadow-sm">
-          <CardHeader className="pb-3">
+        <Card className="rounded-liquid-3 border border-input hover:border-primary/50 transition-all cursor-pointer group shadow-sm">
+          <CardHeader className="pb-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+              <div className="w-10 h-10 rounded-liquid bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary/20 transition-all">
                 <Folder className="h-5 w-5" />
               </div>
               <span className="text-sm font-medium">Browse Repositories</span>
@@ -300,7 +315,7 @@ export default function DashboardPage() {
           <CardContent className="pt-0">
             <p className="text-xs text-muted-foreground">View all synced repositories</p>
           </CardContent>
-          <CardFooter className="pt-3">
+          <CardFooter className="pt-4">
             <a
               href="/repos"
               className="text-xs text-primary font-medium hover:underline flex items-center gap-1"
@@ -310,10 +325,10 @@ export default function DashboardPage() {
             </a>
           </CardFooter>
         </Card>
-        <Card className="rounded-3xl border border-input hover:border-blue-500/50 transition-all cursor-pointer group shadow-sm">
-          <CardHeader className="pb-3">
+        <Card className="rounded-liquid-3 border border-input hover:border-blue-500/50 transition-all cursor-pointer group shadow-sm">
+          <CardHeader className="pb-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+              <div className="w-10 h-10 rounded-liquid bg-blue-100 text-blue-600 flex items-center justify-center group-hover:bg-blue-200 transition-all">
                 <FileText className="h-5 w-5" />
               </div>
               <span className="text-sm font-medium">Manage Issues</span>
@@ -322,7 +337,7 @@ export default function DashboardPage() {
           <CardContent className="pt-0">
             <p className="text-xs text-muted-foreground">Track and create issues</p>
           </CardContent>
-          <CardFooter className="pt-3">
+          <CardFooter className="pt-4">
             <a
               href="/issues"
               className="text-xs text-primary font-medium hover:underline flex items-center gap-1"
@@ -332,10 +347,10 @@ export default function DashboardPage() {
             </a>
           </CardFooter>
         </Card>
-        <Card className="rounded-3xl border border-input hover:border-purple-500/50 transition-all cursor-pointer group shadow-sm">
-          <CardHeader className="pb-3">
+        <Card className="rounded-liquid-3 border border-input hover:border-purple-500/50 transition-all cursor-pointer group shadow-sm">
+          <CardHeader className="pb-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+              <div className="w-10 h-10 rounded-liquid bg-purple-100 text-purple-600 flex items-center justify-center group-hover:bg-purple-200 transition-all">
                 <GitPullRequest className="h-5 w-5" />
               </div>
               <span className="text-sm font-medium">Review Pull Requests</span>
@@ -344,7 +359,7 @@ export default function DashboardPage() {
           <CardContent className="pt-0">
             <p className="text-xs text-muted-foreground">Monitor open PRs</p>
           </CardContent>
-          <CardFooter className="pt-3">
+          <CardFooter className="pt-4">
             <a
               href="/pull-requests"
               className="text-xs text-primary font-medium hover:underline flex items-center gap-1"
@@ -358,12 +373,12 @@ export default function DashboardPage() {
 
       {/* Recent Activity */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
+        transition={{ delay: 0.5 }}
       >
-        <Card className="rounded-3xl shadow-sm border border-input">
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
+        <Card className="rounded-liquid-3 shadow-sm border border-input">
+          <CardHeader className="flex flex-row items-center justify-between pb-4">
             <CardTitle className="text-sm font-semibold">Recent Activity</CardTitle>
             <a href="/repos" className="text-xs text-primary hover:underline">
               View all
@@ -373,17 +388,20 @@ export default function DashboardPage() {
             {loading ? (
               <div className="space-y-3 py-4">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-4 w-3/4 rounded bg-muted animate-pulse" />
+                  <div key={i} className="h-4 w-3/4 rounded-liquid bg-muted animate-pulse" />
                 ))}
               </div>
             ) : repos.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center space-y-3">
+              <div className="flex flex-col items-center justify-center py-16 text-center space-y-3">
                 <Clock className="h-10 w-10 text-muted-foreground" />
                 <h3 className="text-sm font-semibold">No activity yet</h3>
                 <p className="text-xs text-muted-foreground">
                   Sync your repositories to see recent activity here.
                 </p>
-                <Button onClick={() => api.syncRepos().then(() => loadData())} className="mt-4">
+                <Button
+                  onClick={() => api.syncRepos().then(() => loadData())}
+                  className="btn-gradient rounded-liquid px-6 py-3 text-sm font-medium mt-4"
+                >
                   <RefreshCw className="h-4 w-4 mr-2" /> Sync Repositories
                 </Button>
               </div>
@@ -392,7 +410,7 @@ export default function DashboardPage() {
                 {repos.slice(0, 6).map((repo) => (
                   <div
                     key={repo.id}
-                    className="flex items-center justify-between p-3 hover:bg-muted/50 rounded-2xl transition-colors cursor-pointer group"
+                    className="flex items-center justify-between p-4 hover:bg-accent/30 rounded-liquid-2 transition-colors cursor-pointer group"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-xs font-medium">
@@ -408,7 +426,7 @@ export default function DashboardPage() {
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Star className="h-3 w-3 text-yellow-500" />
                       <span className="font-medium">{repo.stars}</span>
-                      <Badge variant="outline" className="h-6 px-2">
+                      <Badge variant="outline" className="h-6 px-2 text-xs font-medium">
                         {repo.isPrivate ? "Private" : "Public"}
                       </Badge>
                     </div>
