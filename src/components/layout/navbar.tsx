@@ -25,11 +25,20 @@ interface NavbarProps {
 }
 
 export function Navbar({ user, onThemeToggle, theme, onSidebarToggle, isCollapsed }: NavbarProps) {
-  const isDark =
-    theme === "dark" ||
-    (theme === "system" &&
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches);
+  // Use state to avoid hydration mismatch: server renders Moon, client updates after mount
+  const [isDark, setIsDark] = React.useState(false);
+
+  React.useEffect(() => {
+    if (theme === "dark") {
+      setIsDark(true);
+    } else if (theme === "system" && typeof window !== "undefined") {
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      setIsDark(mediaQuery.matches);
+      const handler = (e: MediaQueryListEvent) => setIsDark(e.matches);
+      mediaQuery.addEventListener("change", handler);
+      return () => mediaQuery.removeEventListener("change", handler);
+    }
+  }, [theme]);
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center border-b border-input/50 bg-background/80 backdrop-blur-md">
