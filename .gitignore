@@ -35,9 +35,12 @@ yarn-error.log*
 
 # local sqlite / turso database
 /data
+/src/lib/data
 *.sqlite
 *.sqlite-journal
 *.db
+*.sqlite-shm
+*.sqlite-wal
 
 # vercel
 .vercel
