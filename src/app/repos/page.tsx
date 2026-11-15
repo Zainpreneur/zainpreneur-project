@@ -59,13 +59,13 @@ export default function ReposPage() {
   if (loading) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
-        <RefreshCw className="h-8 w-8 animate-spin" />
+        <RefreshCw className="h-8 w-8 shrink-0 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-full overflow-x-hidden">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tighter">Repositories</h1>
@@ -76,7 +76,7 @@ export default function ReposPage() {
         <div className="flex items-center gap-3">
           <div className="relative w-full md:w-96">
             <div className="absolute inset-y-0 left-3 pl-3 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-muted-foreground" />
+              <Search className="h-4 w-4 text-muted-foreground shrink-0" />
             </div>
             <Input
               placeholder="Search repositories..."
@@ -98,7 +98,7 @@ export default function ReposPage() {
             }}
             className="btn-professional"
           >
-            {syncing ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />} {syncing ? "Syncing..." : "Refresh"}
+            {syncing ? <RefreshCw className="h-4 w-4 mr-2 animate-spin shrink-0" /> : <RefreshCw className="h-4 w-4 mr-2 shrink-0" />} {syncing ? "Syncing..." : "Refresh"}
           </Button>
         </div>
       </div>
@@ -122,8 +122,8 @@ export default function ReposPage() {
               <tbody>
                 {filtered.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="p-16 text-center text-muted-foreground">
-                      <Folder className="h-12 w-12 text-muted-foreground mb-4" />
+                    <td colSpan={8} className="p-16 flex flex-col items-center justify-center text-center space-y-3 py-12">
+                      <Folder className="h-12 w-12 shrink-0 text-muted-foreground mb-4" />
                       <h3 className="text-sm font-semibold">No repositories match</h3>
                       <p className="text-xs">Try adjusting your search or wait for auto-sync to complete.</p>
                     </td>
@@ -136,7 +136,7 @@ export default function ReposPage() {
                     >
                       <td className="p-6">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-xs font-medium">
+                          <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-xs font-medium shrink-0">
                             {repo.language?.[0] ?? "?"}
                           </div>
                           <div className="flex flex-col min-w-0">
@@ -175,7 +175,7 @@ export default function ReposPage() {
                       <td className="p-6">
                         <Badge
                           variant={repo.isPrivate ? "destructive" : "secondary"}
-                          className="text-xs font-medium rounded-full px-2.5 py-1"
+                          className="text-xs font-medium rounded-full px-2.5 py-1 shrink-0"
                         >
                           {repo.isPrivate ? "Private" : "Public"}
                         </Badge>
@@ -187,7 +187,7 @@ export default function ReposPage() {
                           rel="noopener noreferrer"
                           className="text-xs text-primary hover:underline flex items-center gap-1"
                         >
-                          View on GitHub <ChevronRight className="h-3 w-3" />
+                          View on GitHub <ChevronRight className="h-3 w-3 shrink-0" />
                         </a>
                       </td>
                     </tr>
@@ -198,13 +198,12 @@ export default function ReposPage() {
           </div>
         </CardContent>
         <CardFooter className="border-t border-input/50 bg-muted/30 p-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <span className="text-xs text-muted-foreground">
               {filtered.length} of {repos.length} repositories
             </span>
-            <span className="text-xs text-muted-foreground">
-              Total stars:
-              <span className="text-yellow-500 font-medium">{repos.reduce((sum: number, r: any) => sum + (r.stars ?? 0), 0)}</span>
+            <span className="text-xs text-muted-foreground text-right">
+              Total stars: <span className="text-yellow-500 font-medium">{repos.reduce((sum: number, r: any) => sum + (r.stars ?? 0), 0)}</span>
             </span>
           </div>
         </CardFooter>
@@ -212,4 +211,3 @@ export default function ReposPage() {
     </div>
   );
 }
-

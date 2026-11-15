@@ -83,7 +83,7 @@ function StatCard({
         </div>
         <div className="w-10 h-10 rounded-lg flex items-center justify-center">
           <div className={`w-full h-full rounded-lg ${colorMap[color as keyof typeof colorMap] ?? "bg-blue-500/10 text-blue-500 border-blue-500/20"} flex items-center justify-center shadow-sm`}>
-            <Icon className={cn("h-5 w-5", trendColors[trend].split(" ")[1])} />
+            <Icon className={cn("h-5 w-5 shrink-0", trendColors[trend].split(" ")[1])} />
           </div>
         </div>
       </div>
@@ -147,6 +147,42 @@ function HealthGauge({ score }: { score: number }) {
   );
 }
 
+// Skeleton components for loading states
+function StatCardSkeleton() {
+  return (
+    <motion.div className="rounded-xl border border-input/50 bg-card p-6 shadow-sm">
+      <div className="flex flex-row items-center justify-between">
+        <div className="flex flex-col gap-1">
+          <div className="h-3 w-1/3 rounded-md bg-muted shrink-0" />
+          <div className="h-6 w-3/4 rounded-md bg-muted shrink-0 mt-2" />
+          <div className="h-3 w-1/2 rounded-md bg-muted shrink-0 mt-2" />
+        </div>
+        <div className="w-10 h-10 rounded-lg bg-muted shrink-0" />
+      </div>
+    </motion.div>
+  );
+}
+
+function HealthGaugeSkeleton() {
+  return (
+    <Card className="rounded-xl border border-input/50 shadow-lg overflow-hidden relative">
+      <CardHeader className="flex flex-row items-center justify-between pb-4">
+        <div className="flex items-center gap-3">
+          <div className="h-6 w-6 rounded-lg bg-muted shrink-0" />
+          <div>
+            <div className="h-4 w-1/3 rounded-md bg-muted shrink-0" />
+            <div className="h-3 w-1/2 rounded-md bg-muted shrink-0 mt-1" />
+          </div>
+        </div>
+        <div className="text-right">
+          <div className="h-8 w-20 rounded-md bg-muted shrink-0" />
+          <div className="h-4 w-1/3 rounded-md bg-muted shrink-0 mt-1" />
+        </div>
+      </CardHeader>
+    </Card>
+  );
+}
+
 export default function DashboardPage() {
   const [repos, setRepos] = React.useState<any[]>([]);
   const [issues, setIssues] = React.useState<any[]>([]);
@@ -176,6 +212,7 @@ export default function DashboardPage() {
 
   async function loadData() {
     try {
+      setLoading(true);
       const [repoRes, issueRes, prRes] = await Promise.all([
         api.getRepos(),
         api.getIssues({ state: "all" }),
@@ -257,7 +294,7 @@ export default function DashboardPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
       >
-        <HealthGauge score={healthScore} />
+        {loading ? <HealthGaugeSkeleton /> : <HealthGauge score={healthScore} />}
       </motion.div>
 
       {/* Stats Grid */}
@@ -267,34 +304,45 @@ export default function DashboardPage() {
         transition={{ delay: 0.3 }}
         className="grid gap-4 md:grid-cols-4"
       >
-        <StatCard
-          title="Total Repositories"
-          value={repos.length}
-          icon={GitBranch}
-          trend="neutral"
-          color="blue"
-        />
-        <StatCard
-          title="Total Stars"
-          value={totalStars}
-          icon={Star}
-          trend="up"
-          color="yellow"
-        />
-        <StatCard
-          title="Open Issues"
-          value={openIssues}
-          icon={FileText}
-          trend={openIssues > 0 ? "down" : "neutral"}
-          color={openIssues > 0 ? "rose" : "emerald"}
-        />
-        <StatCard
-          title="Open Pulls"
-          value={openPRs}
-          icon={GitPullRequest}
-          trend={openPRs > 0 ? "down" : "neutral"}
-          color={openPRs > 0 ? "amber" : "emerald"}
-        />
+        {loading ? (
+          <>
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+          </>
+        ) : (
+          <>
+            <StatCard
+              title="Total Repositories"
+              value={repos.length}
+              icon={GitBranch}
+              trend="neutral"
+              color="blue"
+            />
+            <StatCard
+              title="Total Stars"
+              value={totalStars}
+              icon={Star}
+              trend="up"
+              color="yellow"
+            />
+            <StatCard
+              title="Open Issues"
+              value={openIssues}
+              icon={FileText}
+              trend={openIssues > 0 ? "down" : "neutral"}
+              color={openIssues > 0 ? "rose" : "emerald"}
+            />
+            <StatCard
+              title="Open Pulls"
+              value={openPRs}
+              icon={GitPullRequest}
+              trend={openPRs > 0 ? "down" : "neutral"}
+              color={openPRs > 0 ? "amber" : "emerald"}
+            />
+          </>
+        )}
       </motion.div>
 
       {/* Quick Actions */}
@@ -388,9 +436,9 @@ export default function DashboardPage() {
           <CardContent>
             {loading ? (
               <div className="space-y-3 py-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-4 w-3/4 rounded-md bg-muted animate-pulse shrink-0" />
-                ))}
+                <div className="h-4 w-full rounded-md bg-muted shrink-0" />
+                <div className="h-4 w-3/4 rounded-md bg-muted shrink-0 mt-2" />
+                <div className="h-4 w-1/2 rounded-md bg-muted shrink-0 mt-2" />
               </div>
             ) : repos.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center space-y-3">

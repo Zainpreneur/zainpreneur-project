@@ -40,7 +40,7 @@ export function Sidebar({ isCollapsed = false, isMobileMenuOpen = false, onToggl
             : "w-72 ml-0 shadow-lg",
       )}
     >
-      <div className="flex h-full flex-col">
+      <div className="flex h-full flex-col pb-8">
         {/* Header */}
         <div className="flex items-center justify-between h-16 px-4 border-b border-input">
           {!isCollapsed && (
@@ -60,7 +60,7 @@ export function Sidebar({ isCollapsed = false, isMobileMenuOpen = false, onToggl
           >
             {isMobileMenuOpen ? <X className="h-5 w-5 shrink-0" /> : <ChevronLeft className="h-5 w-5 shrink-0" />}
           </button>
-          {/* Desktop collapse toggle — anchored inside sidebar header, not floating */}
+          {/* Desktop collapse toggle — anchored inside sidebar header */}
           {!isMobileMenuOpen && (
             <button
               onClick={onToggle}

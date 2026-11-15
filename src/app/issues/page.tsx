@@ -28,6 +28,31 @@ const issueSchema = z.object({
   assignees: z.array(z.string()).optional(),
 });
 
+function IssueRowSkeleton() {
+  return (
+    <div className="flex flex-col gap-2 p-4">
+      <div className="flex flex-row items-start justify-between gap-3">
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-20 rounded-lg bg-muted shrink-0" />
+            <div className="h-8 w-6 rounded-lg bg-muted shrink-0" />
+          </div>
+          <div className="h-4 w-3/4 rounded-md bg-muted shrink-0 mt-2" />
+          <p className="text-xs text-muted-foreground mt-1">
+            <span className="h-3 w-12 rounded-md bg-muted shrink-0" />
+            <span className="h-3 w-4 rounded-md bg-muted shrink-0" />
+          </p>
+        </div>
+        <div className="h-8 w-8 rounded-md bg-muted shrink-0" />
+      </div>
+      <div className="flex items-center justify-between text-xs text-muted-foreground mt-2">
+        <span className="h-3 w-1/3 rounded-md bg-muted shrink-0" />
+        <span className="h-3 w-6 rounded-md bg-muted shrink-0" />
+      </div>
+    </div>
+  );
+}
+
 export default function IssuesPage() {
   const [issues, setIssues] = React.useState<any[]>([]);
   const [repos, setRepos] = React.useState<any[]>([]);
@@ -138,9 +163,64 @@ export default function IssuesPage() {
 
   if (loading) {
     return (
-      <div className="flex h-[60vh] items-center justify-center">
-        <RefreshCw className="h-8 w-8 shrink-0 animate-spin" />
-      </div>
+      <>
+        <div className="space-y-6">
+          <div className="flex items-center gap-3">
+            <Button onClick={() => setOpenCreate(true)} disabled={repos.length === 0} className="btn-professional">
+              <Plus className="h-4 w-4 shrink-0 mr-2" /> New Issue
+            </Button>
+            <Button className="btn-professional">
+              <RefreshCw className="h-4 w-4 shrink-0 mr-2" /> Refresh
+            </Button>
+          </div>
+          <Card className="card-professional shadow-sm">
+            <CardContent className="p-6">
+              <div className="flex flex-col sm:flex-row gap-4 items-end">
+                <div className="flex items-center gap-3">
+                  <Label className="text-xs font-medium">State</Label>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setFilter({
+                        ...filter,
+                        state: filter.state === "all" ? "open" : "closed",
+                      })
+                    }
+                    className="h-9 px-4 rounded-lg"
+                  >
+                    {filter.state === "all" ? "Show Open" : "Show All"}
+                  </Button>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Label className="text-xs font-medium">Repository</Label>
+                  <select
+                    value={filter.repositoryId}
+                    onChange={(e) => setFilter({ ...filter, repositoryId: e.target.value })}
+                    className="select-pro"
+                  >
+                    <option value="">All Repositories</option>
+                    {repos.map((r) => (
+                      <option key={r.id} value={r.id}>
+                        {r.fullName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="card-professional shadow-sm">
+            <CardContent>
+              <div className="divide-y divide-input/50">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <IssueRowSkeleton key={i} />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </>
     );
   }
 
@@ -300,11 +380,7 @@ export default function IssuesPage() {
       {/* Issues List */}
       <Card className="card-professional shadow-sm">
         <CardContent>
-          {loading ? (
-            <div className="h-[400px] flex items-center justify-center">
-              <RefreshCw className="h-8 w-8 shrink-0 animate-spin" />
-            </div>
-          ) : filtered.length === 0 ? (
+          {filtered.length === 0 ? (
             <div className="text-center py-16">
               <FileText className="h-12 w-12 shrink-0 text-muted-foreground mb-4" />
               <h3 className="text-sm font-semibold">No issues</h3>

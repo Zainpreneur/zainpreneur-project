@@ -19,6 +19,34 @@ import { Label } from "@/components/ui/label";
 import { GitPullRequest, RefreshCw, Filter } from "lucide-react";
 import { motion } from "framer-motion";
 
+function PRRowSkeleton() {
+  return (
+    <div className="flex flex-col gap-2 p-4">
+      <div className="flex flex-row items-start justify-between gap-3">
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <div className="h-6 w-12 rounded-lg bg-muted shrink-0" />
+            <div className="h-6 w-6 rounded-lg bg-muted shrink-0" />
+          </div>
+          <div className="h-4 w-3/4 rounded-md bg-muted shrink-0 mt-2" />
+          <p className="text-xs text-muted-foreground mt-1">
+            <span className="h-3 w-10 rounded-md bg-muted shrink-0" />
+            <span className="h-3 w-4 rounded-md bg-muted shrink-0" />
+          </p>
+        </div>
+      </div>
+      <div className="flex items-center gap-3 text-xs text-muted-foreground mt-2">
+        <span className="h-3 w-1/4 rounded-md bg-muted shrink-0" />
+        <span className="flex items-center gap-1">
+          <span className="h-3 w-12 rounded-md bg-muted shrink-0" />
+          <span className="h-3 w-2 rounded-md bg-muted shrink-0" />
+          <span className="h-3 w-12 rounded-md bg-muted shrink-0" />
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export default function PullRequestsPage() {
   const [prs, setPRs] = React.useState<any[]>([]);
   const [repos, setRepos] = React.useState<any[]>([]);
@@ -30,7 +58,6 @@ export default function PullRequestsPage() {
   const [syncing, setSyncing] = React.useState(false);
 
   useEffect(() => {
-    // Auto-sync on mount
     api.syncRepos()
       .then((res) => {
         toast({ title: "Auto-synced", description: `${res.syncedPRs} PRs synced` });
@@ -66,9 +93,66 @@ export default function PullRequestsPage() {
 
   if (loading) {
     return (
-      <div className="flex h-[60vh] items-center justify-center">
-        <RefreshCw className="h-8 w-8 shrink-0 animate-spin" />
-      </div>
+      <>
+        <div className="space-y-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tighter">Pull Requests</h1>
+              <p className="text-muted-foreground mt-1">
+                Monitor and manage pull requests across all repositories
+              </p>
+            </div>
+            <Button className="btn-professional">
+              <RefreshCw className="h-4 w-4 shrink-0 mr-2" /> Refresh
+            </Button>
+          </div>
+        </div>
+        <Card className="card-professional shadow-sm">
+          <CardContent className="p-6">
+            <div className="flex flex-col sm:flex-row gap-4 items-end">
+              <div className="flex items-center gap-3">
+                <Label className="text-xs font-medium">State</Label>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setFilter({
+                      ...filter,
+                      state:
+                        filter.state === "all" ? "open" : filter.state === "open" ? "merged" : "all",
+                    })
+                  }
+                  className="h-9 px-4 rounded-lg"
+                >
+                  {filter.state === "all" ? "Open Only" : filter.state === "open" ? "Merged" : "All"}
+                </Button>
+              </div>
+              <div className="flex items-center gap-3">
+                <Label className="text-xs font-medium">Repository</Label>
+                <select
+                  value={filter.repositoryId}
+                  onChange={(e) => setFilter({ ...filter, repositoryId: e.target.value })}
+                  className="select-pro"
+                >
+                  <option value="">All Repositories</option>
+                  {repos.map((r) => (
+                    <option key={r.id} value={r.id}>{r.fullName}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="card-professional shadow-sm">
+          <CardContent>
+            <div className="divide-y divide-input/50">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <PRRowSkeleton key={i} />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </>
     );
   }
 
@@ -119,7 +203,6 @@ export default function PullRequestsPage() {
         </Button>
       </div>
 
-      {/* Filters */}
       <Card className="card-professional shadow-sm">
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row gap-4 items-end">
@@ -157,7 +240,6 @@ export default function PullRequestsPage() {
         </CardContent>
       </Card>
 
-      {/* PRs List */}
       <Card className="card-professional shadow-sm">
         <CardContent>
           <div className="divide-y divide-input/50">

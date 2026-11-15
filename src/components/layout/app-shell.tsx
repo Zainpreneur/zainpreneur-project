@@ -29,34 +29,38 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <Providers>
-      <Navbar
-        user={null}
-        onThemeToggle={() => {}}
-        theme="system"
-        onSidebarToggle={toggleSidebar}
-        isCollapsed={isCollapsed}
-      />
-      {isMobileMenuOpen && (
-        <div
-          className="fixed inset-0 z-49 bg-black/50 backdrop-blur-sm md:hidden"
-          onClick={() => setIsMobileMenuOpen(false)}
-          aria-hidden="true"
-        />
-      )}
       <div className="flex flex-1 min-h-[calc(100vh-3.5rem)] relative">
+        {/* Sidebar — full height, left edge */}
         <Sidebar
           isCollapsed={isCollapsed}
           isMobileMenuOpen={isMobileMenuOpen}
           onToggle={toggleSidebar}
         />
-        <main
-          className={cn(
-            "flex-1 overflow-y-auto p-6 lg:p-8 transition-all duration-300 ease-in-out",
-            isMobileMenuOpen ? MOBILE_DRAWER_WIDTH : isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
-          )}
-        >
-          {children}
-        </main>
+        {/* Main column — navbar + content, only to the right of sidebar */}
+        <div className="flex-1 flex flex-col min-h-[calc(100vh-3.5rem)]">
+          <Navbar
+            user={null}
+            onThemeToggle={() => {}}
+            theme="system"
+            onSidebarToggle={toggleSidebar}
+            isCollapsed={isCollapsed}
+          />
+          <main
+            className={cn(
+              "flex-1 overflow-y-auto p-6 lg:p-8 transition-all duration-300 ease-in-out",
+              isMobileMenuOpen ? MOBILE_DRAWER_WIDTH : isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
+            )}
+          >
+            {children}
+          </main>
+        </div>
+        {isMobileMenuOpen && (
+          <div
+            className="fixed inset-0 z-49 bg-black/50 backdrop-blur-sm md:hidden"
+            onClick={() => setIsMobileMenuOpen(false)}
+            aria-hidden="true"
+          />
+        )}
       </div>
     </Providers>
   );
