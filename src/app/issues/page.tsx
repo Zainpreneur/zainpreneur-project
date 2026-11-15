@@ -38,6 +38,7 @@ export default function IssuesPage() {
   });
   const [openCreate, setOpenCreate] = React.useState(false);
   const [createLoading, setCreateLoading] = React.useState(false);
+  const [syncing, setSyncing] = React.useState(false);
   const [form, setForm] = React.useState<{
     repositoryId: string;
     title: string;
@@ -53,7 +54,16 @@ export default function IssuesPage() {
   });
 
   useEffect(() => {
-    loadData();
+    // Auto-sync on mount
+    api.syncRepos()
+      .then((res) => {
+        toast({ title: "Auto-synced", description: `${res.syncedIssues} issues synced` });
+        loadData();
+      })
+      .catch((err: any) => {
+        toast({ title: "Sync failed", description: err?.message ?? "Failed to sync" });
+        loadData(); // Still try to load existing data
+      });
   }, []);
 
   async function loadData() {
@@ -147,8 +157,17 @@ export default function IssuesPage() {
           <Button onClick={() => setOpenCreate(true)} disabled={repos.length === 0} className="btn-professional">
             <Plus className="h-4 w-4 mr-2" /> New Issue
           </Button>
-          <Button onClick={() => loadData()} className="btn-professional">
-            <RefreshCw className="h-4 w-4 mr-2" /> Refresh
+          <Button onClick={() => {
+            setSyncing(true);
+            api.syncRepos()
+              .then((res) => {
+                toast({ title: "Synced", description: `${res.syncedIssues} issues synced` });
+                loadData();
+              })
+              .catch((err: any) => toast({ title: "Sync failed", description: err?.message ?? "Failed to sync" }))
+              .finally(() => setSyncing(false));
+          }} className="btn-professional">
+            {syncing ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />} {syncing ? "Syncing..." : "Refresh"}
           </Button>
         </div>
       </div>
@@ -349,4 +368,3 @@ export default function IssuesPage() {
     </div>
   );
 }
-

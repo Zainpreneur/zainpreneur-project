@@ -27,9 +27,19 @@ export default function PullRequestsPage() {
     state: "all",
     repositoryId: "",
   });
+  const [syncing, setSyncing] = React.useState(false);
 
   useEffect(() => {
-    loadData();
+    // Auto-sync on mount
+    api.syncRepos()
+      .then((res) => {
+        toast({ title: "Auto-synced", description: `${res.syncedPRs} PRs synced` });
+        loadData();
+      })
+      .catch((err: any) => {
+        toast({ title: "Sync failed", description: err?.message ?? "Failed to sync" });
+        loadData();
+      });
   }, []);
 
   async function loadData() {
@@ -70,8 +80,17 @@ export default function PullRequestsPage() {
         <p className="text-muted-foreground max-w-sm mx-auto">
           Sync your repositories to see pull requests here.
         </p>
-        <Button onClick={() => loadData()} className="btn-professional">
-          <RefreshCw className="h-4 w-4 mr-2" /> Refresh
+        <Button onClick={() => {
+          setSyncing(true);
+          api.syncRepos()
+            .then((res) => {
+              toast({ title: "Synced", description: `${res.syncedPRs} PRs synced` });
+              loadData();
+            })
+            .catch((err: any) => toast({ title: "Sync failed", description: err?.message ?? "Failed to sync" }))
+            .finally(() => setSyncing(false));
+        }} className="btn-professional">
+          <RefreshCw className="h-4 w-4 mr-2" /> Sync Now
         </Button>
       </div>
     );
@@ -86,8 +105,17 @@ export default function PullRequestsPage() {
             Monitor and manage pull requests across all repositories
           </p>
         </div>
-        <Button onClick={() => loadData()} className="btn-professional">
-          <RefreshCw className="h-4 w-4 mr-2" /> Refresh
+        <Button onClick={() => {
+          setSyncing(true);
+          api.syncRepos()
+            .then((res) => {
+              toast({ title: "Synced", description: `${res.syncedPRs} PRs synced` });
+              loadData();
+            })
+            .catch((err: any) => toast({ title: "Sync failed", description: err?.message ?? "Failed to sync" }))
+            .finally(() => setSyncing(false));
+        }} className="btn-professional">
+          {syncing ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />} {syncing ? "Syncing..." : "Refresh"}
         </Button>
       </div>
 

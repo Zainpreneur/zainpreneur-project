@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { api } from "@/lib/api";
 import { toast } from "@/components/ui/toast";
 import {
@@ -176,14 +176,29 @@ export default function DashboardPage() {
   const [prs, setPRs] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [healthScore, setHealthScore] = React.useState(0);
+  const [syncStatus, setSyncStatus] = React.useState<{
+    lastSynced: string | null;
+    syncing: boolean;
+  }>({ lastSynced: null, syncing: false });
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  const SYNC_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
+
+  async function performSync() {
+    setSyncStatus((prev) => ({ ...prev, syncing: true }));
+    try {
+      const res = await api.syncRepos();
+      const now = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      setSyncStatus({ lastSynced: now, syncing: false });
+      toast({ title: "Auto-synced", description: `${res.syncedRepos} repos, ${res.syncedIssues} issues, ${res.syncedPRs} PRs` });
+    } catch (error: any) {
+      setSyncStatus((prev) => ({ ...prev, syncing: false }));
+      toast({ title: "Sync failed", description: error?.message ?? "Failed to sync" });
+    }
+  }
 
   async function loadData() {
     try {
-      setLoading(true);
       const [repoRes, issueRes, prRes] = await Promise.all([
         api.getRepos(),
         api.getIssues({ state: "all" }),
@@ -216,6 +231,20 @@ export default function DashboardPage() {
     }
   }
 
+  useEffect(() => {
+    // Auto-sync on mount, then load data
+    performSync().then(() => loadData());
+
+    // Set up background sync interval (every 5 minutes)
+    intervalRef.current = setInterval(performSync, SYNC_INTERVAL_MS);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
+
   const openIssues = issues.filter((i) => i.state === "open").length;
   const openPRs = prs.filter((p) => p.state === "open").length;
   const totalStars = repos.reduce((sum: number, r: any) => sum + (r.stars ?? 0), 0);
@@ -236,17 +265,12 @@ export default function DashboardPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button
-            onClick={() => {
-              api.syncRepos().then(() => {
-                toast({ title: "Synced", description: "Repositories synced successfully" });
-                loadData();
-              });
-            }}
-            className="btn-professional"
-          >
-            <RefreshCw className="h-4 w-4 mr-2" /> Sync Now
-          </Button>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted border border-input text-xs">
+            <RefreshCw className="h-3 w-3 {syncStatus.syncing ? 'animate-spin' : ''}" />
+            <span className={syncStatus.syncing ? "text-primary" : "text-muted-foreground"}>
+              {syncStatus.syncing ? "Syncing..." : syncStatus.lastSynced ? `Last synced ${syncStatus.lastSynced}` : "Auto-sync enabled"}
+            </span>
+          </div>
         </div>
       </motion.div>
 
@@ -396,14 +420,8 @@ export default function DashboardPage() {
                 <Clock className="h-10 w-10 text-muted-foreground" />
                 <h3 className="text-sm font-semibold">No activity yet</h3>
                 <p className="text-xs text-muted-foreground">
-                  Sync your repositories to see recent activity here.
+                  Repositories are being synced automatically. Please wait a moment.
                 </p>
-                <Button
-                  onClick={() => api.syncRepos().then(() => loadData())}
-                  className="btn-professional mt-4"
-                >
-                  <RefreshCw className="h-4 w-4 mr-2" /> Sync Repositories
-                </Button>
               </div>
             ) : (
               <div className="divide-y divide-input/50">
@@ -445,4 +463,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-

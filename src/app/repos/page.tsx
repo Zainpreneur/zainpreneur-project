@@ -23,9 +23,19 @@ export default function ReposPage() {
   const [repos, setRepos] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [search, setSearch] = React.useState("");
+  const [syncing, setSyncing] = React.useState(false);
 
   useEffect(() => {
-    loadRepos();
+    // Auto-sync on mount
+    api.syncRepos()
+      .then((res) => {
+        toast({ title: "Auto-synced", description: `${res.syncedRepos} repos synced` });
+        loadRepos();
+      })
+      .catch((err: any) => {
+        toast({ title: "Sync failed", description: err?.message ?? "Failed to sync" });
+        loadRepos(); // Still try to load existing data
+      });
   }, []);
 
   async function loadRepos() {
@@ -76,10 +86,19 @@ export default function ReposPage() {
             />
           </div>
           <Button
-            onClick={() => loadRepos()}
+            onClick={() => {
+              setSyncing(true);
+              api.syncRepos()
+                .then((res) => {
+                  toast({ title: "Synced", description: `${res.syncedRepos} repos synced` });
+                  loadRepos();
+                })
+                .catch((err: any) => toast({ title: "Sync failed", description: err?.message ?? "Failed to sync" }))
+                .finally(() => setSyncing(false));
+            }}
             className="btn-professional"
           >
-            <RefreshCw className="h-4 w-4 mr-2" /> Refresh
+            {syncing ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />} {syncing ? "Syncing..." : "Refresh"}
           </Button>
         </div>
       </div>
@@ -106,7 +125,7 @@ export default function ReposPage() {
                     <td colSpan={8} className="p-16 text-center text-muted-foreground">
                       <Folder className="h-12 w-12 text-muted-foreground mb-4" />
                       <h3 className="text-sm font-semibold">No repositories match</h3>
-                      <p className="text-xs">Try adjusting your search or sync your repositories.</p>
+                      <p className="text-xs">Try adjusting your search or wait for auto-sync to complete.</p>
                     </td>
                   </tr>
                 ) : (
