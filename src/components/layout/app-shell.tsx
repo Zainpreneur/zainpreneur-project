@@ -13,7 +13,7 @@ export function AppShell({ children }: AppShellProps) {
     <Providers>
       <Navbar user={null} onThemeToggle={() => {}} theme="system" />
       <div className="flex flex-1 min-h-[calc(100vh-3.5rem)]">
-        <Sidebar user={null} isCollapsed={false} onToggle={() => {}} />
+        <Sidebar isCollapsed={false} onToggle={() => {}} />
         <main className="flex-1 overflow-y-auto p-6 lg:p-8">
           {children}
         </main>

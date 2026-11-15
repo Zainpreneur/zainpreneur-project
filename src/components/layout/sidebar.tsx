@@ -1,7 +1,3 @@
-"use client";
-
-import * as React from "react";
-import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import {
@@ -9,14 +5,11 @@ import {
   GitBranch,
   FileText,
   GitPullRequest,
-  Settings,
-  ShieldAlert,
   ChevronLeft,
   User,
   Folder,
   Activity,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -24,19 +17,14 @@ const navigation = [
   { name: "Issues", href: "/issues", icon: FileText },
   { name: "Pull Requests", href: "/pull-requests", icon: GitPullRequest },
   { name: "Activity", href: "/dashboard", icon: Activity },
-  { name: "Settings", href: "/settings", icon: Settings },
 ] as const;
 
 interface SidebarProps {
-  user?: { login: string; avatar_url?: string } | null;
   isCollapsed?: boolean;
   onToggle: () => void;
 }
 
-export function Sidebar({ user, isCollapsed = false, onToggle }: SidebarProps) {
-  const pathname = usePathname();
-  const router = useRouter();
-
+export function Sidebar({ isCollapsed = false, onToggle }: SidebarProps) {
   return (
     <aside
       className={cn(
@@ -68,24 +56,13 @@ export function Sidebar({ user, isCollapsed = false, onToggle }: SidebarProps) {
         <nav className="flex-1 space-y-1 p-2 overflow-y-auto">
           {navigation.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href;
             return (
               <Link
                 key={item.name}
                 href={item.href}
-                onClick={(e) => {
-                  if (isCollapsed) {
-                    e.preventDefault();
-                    onToggle();
-                  } else {
-                    router.push(item.href);
-                  }
-                }}
                 className={cn(
                   "flex items-center rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
-                  isActive
-                    ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                  "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
                   isCollapsed ? "justify-center px-2" : "",
                 )}
               >
@@ -96,30 +73,15 @@ export function Sidebar({ user, isCollapsed = false, onToggle }: SidebarProps) {
           })}
         </nav>
 
-        {/* Footer - user + logout */}
-        <div className={cn("p-3 border-t border-input/50", isCollapsed && "justify-center")}>
+        {/* Footer - connected status */}
+        <div className="p-3 border-t border-input/50">
           <div className="flex items-center gap-3">
-            {user?.avatar_url && (
-              <img
-                src={user.avatar_url}
-                alt=""
-                className="h-8 w-8 rounded-full border border-input"
-              />
-            )}
-            {!isCollapsed && user && (
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium truncate">{user.login}</p>
-              </div>
-            )}
+            <User className="h-8 w-8 text-muted-foreground" />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium truncate">Zainpreneur</p>
+              <p className="text-xs text-muted-foreground">GitHub • Connected</p>
+            </div>
           </div>
-          {!isCollapsed && (
-            <button
-              onClick={() => router.push("/settings")}
-              className="mt-2 w-full flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-muted-foreground hover:bg-accent transition-colors"
-            >
-              <Settings className="h-4 w-4" /> Settings
-            </button>
-          )}
         </div>
       </div>
     </aside>

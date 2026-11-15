@@ -102,8 +102,6 @@ export default function DashboardPage() {
   const [prs, setPRs] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [healthScore, setHealthScore] = React.useState(0);
-  const [connected, setConnected] = React.useState(false);
-
   useEffect(() => {
     loadData();
   }, []);
@@ -111,13 +109,11 @@ export default function DashboardPage() {
   async function loadData() {
     try {
       setLoading(true);
-      const [userRes, repoRes, issueRes, prRes] = await Promise.all([
-        api.getUser(),
+      const [repoRes, issueRes, prRes] = await Promise.all([
         api.getRepos(),
         api.getIssues({ state: "all" }),
         api.getPullRequests({ state: "all" }),
       ]);
-      setConnected(!!userRes.user);
       setRepos(repoRes.repositories ?? []);
       setIssues(issueRes.issues ?? []);
       setPRs(prRes.pullRequests ?? []);
@@ -149,21 +145,6 @@ export default function DashboardPage() {
   const openPRs = prs.filter((p) => p.state === "open").length;
   const totalStars = repos.reduce((sum, r) => sum + (r.stars ?? 0), 0);
   const totalForks = repos.reduce((sum, r) => sum + (r.forks ?? 0), 0);
-
-  if (!connected) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
-        <ShieldCheck className="h-12 w-12 text-muted-foreground" />
-        <h2 className="text-xl font-semibold">Connect GitHub</h2>
-        <p className="text-muted-foreground max-w-md mx-auto">
-          Connect your GitHub account in Settings to see your dashboard overview.
-        </p>
-        <Button onClick={() => (window.location.href = "/settings")}>
-          Go to Settings
-        </Button>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-8">
