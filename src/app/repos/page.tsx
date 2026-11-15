@@ -54,32 +54,17 @@ export default function ReposPage() {
     );
   }
 
-  if (repos.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-        <Folder className="h-12 w-12 text-muted-foreground" />
-        <h2 className="text-xl font-semibold">No repositories</h2>
-        <p className="text-muted-foreground max-w-sm mx-auto">
-          Connect your GitHub account and sync to see your repositories here.
-        </p>
-        <Button onClick={() => api.syncRepos().then(() => loadRepos())}>
-          <RefreshCw className="h-4 w-4 mr-2" /> Sync Repositories
-        </Button>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Repositories</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Repositories</h1>
           <p className="text-muted-foreground mt-1">
-            All your GitHub repositories synced locally
+            All your team's GitHub repositories synced locally
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="relative w-full md:w-80">
+          <div className="relative w-full md:w-96">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search repositories..."
@@ -94,27 +79,29 @@ export default function ReposPage() {
         </div>
       </div>
 
-      <Card className="rounded-2xl shadow-sm border border-input">
+      <Card className="rounded-3xl shadow-sm border border-input overflow-hidden">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-input/50 bg-muted/50 text-xs uppercase tracking-wider text-muted-foreground">
-                  <th className="p-4 font-medium">Repository</th>
-                  <th className="p-4 font-medium text-right">Stars</th>
-                  <th className="p-4 font-medium text-right">Forks</th>
-                  <th className="p-4 font-medium text-right">Issues</th>
-                  <th className="p-4 font-medium text-right">Size</th>
-                  <th className="p-4 font-medium">Language</th>
-                  <th className="p-4 font-medium">Visibility</th>
-                  <th className="p-4 font-medium text-right">Actions</th>
+                  <th className="p-5 font-medium">Repository</th>
+                  <th className="p-5 font-medium text-right">Stars</th>
+                  <th className="p-5 font-medium text-right">Forks</th>
+                  <th className="p-5 font-medium text-right">Issues</th>
+                  <th className="p-5 font-medium text-right">Size</th>
+                  <th className="p-5 font-medium">Language</th>
+                  <th className="p-5 font-medium">Visibility</th>
+                  <th className="p-5 font-medium text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="p-8 text-center text-muted-foreground">
-                      No repositories match your search.
+                    <td colSpan={8} className="p-16 text-center text-muted-foreground">
+                      <Folder className="h-10 w-10 text-muted-foreground mb-3" />
+                      <h3 className="text-sm font-semibold">No repositories match</h3>
+                      <p className="text-xs">Try adjusting your search or sync your repositories.</p>
                     </td>
                   </tr>
                 ) : (
@@ -123,9 +110,9 @@ export default function ReposPage() {
                       key={repo.id}
                       className="border-b border-input/50 hover:bg-muted/50 transition-colors group"
                     >
-                      <td className="p-4">
+                      <td className="p-5">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-xs font-medium">
+                          <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center text-xs font-medium">
                             {repo.language?.[0] ?? "?"}
                           </div>
                           <div className="flex flex-col min-w-0">
@@ -143,33 +130,33 @@ export default function ReposPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="p-4 text-right">
+                      <td className="p-5 text-right">
                         <span className="text-sm font-medium">{repo.stars}</span>
                         <Star className="h-3 w-3 text-yellow-500 ml-1" />
                       </td>
-                      <td className="p-4 text-right text-muted-foreground">
+                      <td className="p-5 text-right text-muted-foreground">
                         {repo.forks}
                       </td>
-                      <td className="p-4 text-right text-muted-foreground">
+                      <td className="p-5 text-right text-muted-foreground">
                         {repo.openIssues}
                       </td>
-                      <td className="p-4 text-right text-muted-foreground">
+                      <td className="p-5 text-right text-muted-foreground">
                         {(repo.size / 1024).toFixed(1)} MB
                       </td>
-                      <td className="p-4">
+                      <td className="p-5">
                         <span className="text-xs font-medium text-muted-foreground">
                           {repo.language ?? "Unknown"}
                         </span>
                       </td>
-                      <td className="p-4">
+                      <td className="p-5">
                         <Badge
                           variant={repo.isPrivate ? "destructive" : "secondary"}
-                          className="text-xs"
+                          className="text-xs font-medium"
                         >
                           {repo.isPrivate ? "Private" : "Public"}
                         </Badge>
                       </td>
-                      <td className="p-4 text-right">
+                      <td className="p-5 text-right">
                         <a
                           href={repo.htmlUrl}
                           target="_blank"
@@ -186,13 +173,14 @@ export default function ReposPage() {
             </table>
           </div>
         </CardContent>
-        <CardFooter className="border-t border-input/50 bg-muted/50 p-4">
+        <CardFooter className="border-t border-input/50 bg-muted/50 p-5">
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">
               {filtered.length} of {repos.length} repositories
             </span>
             <span className="text-xs text-muted-foreground">
-              Total stars: {repos.reduce((sum, r) => sum + (r.stars ?? 0), 0)}
+              Total stars:
+              <span className="text-yellow-500 font-medium">{repos.reduce((sum, r) => sum + (r.stars ?? 0), 0)}</span>
             </span>
           </div>
         </CardFooter>

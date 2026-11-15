@@ -138,7 +138,7 @@ export default function IssuesPage() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Issues</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Issues</h1>
           <p className="text-muted-foreground mt-1">
             Track and manage issues across all repositories
           </p>
@@ -154,8 +154,8 @@ export default function IssuesPage() {
       </div>
 
       {/* Filters */}
-      <Card className="rounded-xl border border-input shadow-sm">
-        <CardContent className="p-4">
+      <Card className="rounded-3xl border border-input shadow-sm">
+        <CardContent className="p-5">
           <div className="flex flex-col sm:flex-row gap-4 items-end">
             <div className="flex items-center gap-3">
               <Label className="text-xs font-medium">State</Label>
@@ -178,7 +178,7 @@ export default function IssuesPage() {
               <select
                 value={filter.repositoryId}
                 onChange={(e) => setFilter({ ...filter, repositoryId: e.target.value })}
-                className="border rounded-md px-3 py-2 text-sm bg-background"
+                className="border rounded-xl px-3 py-2 text-sm bg-background"
               >
                 <option value="">All Repositories</option>
                 {repos.map((r) => (
@@ -195,13 +195,13 @@ export default function IssuesPage() {
       {/* Create Issue Modal */}
       {openCreate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setOpenCreate(false)} />
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setOpenCreate(false)} />
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="relative w-full max-w-md p-6"
           >
-            <Card className="rounded-2xl shadow-lg">
+            <Card className="rounded-3xl shadow-2xl">
               <CardHeader>
                 <CardTitle>Create New Issue</CardTitle>
               </CardHeader>
@@ -211,7 +211,7 @@ export default function IssuesPage() {
                     <Label htmlFor="repositoryId">Repository</Label>
                     <select
                       id="repositoryId"
-                      className="border rounded-md px-3 py-2 text-sm bg-background"
+                      className="border rounded-xl px-3 py-2 text-sm bg-background"
                       value={form.repositoryId}
                       onChange={(e) => setForm({ ...form, repositoryId: e.target.value })}
                     >
@@ -239,7 +239,7 @@ export default function IssuesPage() {
                       placeholder="Description..."
                       value={form.body}
                       onChange={(e) => setForm({ ...form, body: e.target.value })}
-                      className="border rounded-md px-3 py-2 text-sm bg-background h-32"
+                      className="border rounded-xl px-3 py-2 text-sm bg-background h-32"
                     />
                   </div>
                   <div className="space-y-2">
@@ -262,7 +262,7 @@ export default function IssuesPage() {
                   </div>
                 </form>
               </CardContent>
-              <CardFooter className="flex justify-end gap-2 p-4">
+              <CardFooter className="flex justify-end gap-2 p-5">
                 <Button variant="outline" onClick={() => setOpenCreate(false)}>
                   Cancel
                 </Button>
@@ -276,7 +276,7 @@ export default function IssuesPage() {
       )}
 
       {/* Issues List */}
-      <Card className="rounded-xl border border-input shadow-sm">
+      <Card className="rounded-3xl border border-input shadow-sm">
         <CardContent>
           {loading ? (
             <div className="h-[400px] flex items-center justify-center">
@@ -297,19 +297,19 @@ export default function IssuesPage() {
                   key={issue.id}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="flex flex-col gap-2 p-3 hover:bg-muted/50 transition-colors cursor-pointer group"
+                  className="flex flex-col gap-2 p-4 hover:bg-muted/50 transition-colors cursor-pointer group"
                 >
                   <div className="flex flex-row items-start justify-between gap-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <Badge
                           variant={issue.state === "open" ? "default" : "secondary"}
-                          className="text-xs"
+                          className="text-xs font-medium"
                         >
                           {issue.state}
                         </Badge>
                         {issue.source === "local" && (
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant="outline" className="text-xs font-medium">
                             Local
                           </Badge>
                         )}

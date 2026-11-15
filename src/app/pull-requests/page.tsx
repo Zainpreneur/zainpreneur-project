@@ -81,7 +81,7 @@ export default function PullRequestsPage() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Pull Requests</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Pull Requests</h1>
           <p className="text-muted-foreground mt-1">
             Monitor and manage pull requests across all repositories
           </p>
@@ -92,8 +92,8 @@ export default function PullRequestsPage() {
       </div>
 
       {/* Filters */}
-      <Card className="rounded-xl border border-input shadow-sm">
-        <CardContent className="p-4">
+      <Card className="rounded-3xl border border-input shadow-sm">
+        <CardContent className="p-5">
           <div className="flex flex-col sm:flex-row gap-4 items-end">
             <div className="flex items-center gap-3">
               <Label className="text-xs font-medium">State</Label>
@@ -117,7 +117,7 @@ export default function PullRequestsPage() {
               <select
                 value={filter.repositoryId}
                 onChange={(e) => setFilter({ ...filter, repositoryId: e.target.value })}
-                className="border rounded-md px-3 py-2 text-sm bg-background"
+                className="border rounded-xl px-3 py-2 text-sm bg-background"
               >
                 <option value="">All Repositories</option>
                 {repos.map((r) => (
@@ -130,7 +130,7 @@ export default function PullRequestsPage() {
       </Card>
 
       {/* PRs List */}
-      <Card className="rounded-xl border border-input shadow-sm">
+      <Card className="rounded-3xl border border-input shadow-sm">
         <CardContent>
           <div className="divide-y divide-input/50">
             {filtered.map((pr) => (
@@ -138,7 +138,7 @@ export default function PullRequestsPage() {
                 key={pr.id}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="flex flex-col gap-2 p-3 hover:bg-muted/50 transition-colors"
+                className="flex flex-col gap-2 p-4 hover:bg-muted/50 transition-colors"
               >
                 <div className="flex flex-row items-start justify-between gap-3">
                   <div className="flex-1">
@@ -151,12 +151,12 @@ export default function PullRequestsPage() {
                               ? "secondary"
                               : "destructive"
                         }
-                        className="text-xs"
+                        className="text-xs font-medium"
                       >
                         {pr.state}
                       </Badge>
                       {pr.draft && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs font-medium">
                           Draft
                         </Badge>
                       )}
