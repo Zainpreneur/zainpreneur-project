@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GitPullRequest, RefreshCw, Filter } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function PullRequestsPage() {
   const [prs, setPRs] = React.useState<any[]>([]);
@@ -47,6 +48,12 @@ export default function PullRequestsPage() {
     }
   }
 
+  const filtered = prs.filter((p) => {
+    if (filter.state !== "all" && p.state !== filter.state) return false;
+    if (filter.repositoryId && p.repositoryId !== Number(filter.repositoryId)) return false;
+    return true;
+  });
+
   if (loading) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
@@ -55,12 +62,12 @@ export default function PullRequestsPage() {
     );
   }
 
-  if (prs.length === 0) {
+  if (filtered.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <GitPullRequest className="h-12 w-12 text-muted-foreground mb-4" />
+      <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
+        <GitPullRequest className="h-12 w-12 text-muted-foreground" />
         <h2 className="text-xl font-semibold">No pull requests</h2>
-        <p className="text-muted-foreground mb-6">
+        <p className="text-muted-foreground max-w-sm mx-auto">
           Sync your repositories to see pull requests here.
         </p>
         <Button onClick={() => loadData()}>
@@ -74,8 +81,8 @@ export default function PullRequestsPage() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Pull Requests</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl font-bold tracking-tight">Pull Requests</h1>
+          <p className="text-muted-foreground mt-1">
             Monitor and manage pull requests across all repositories
           </p>
         </div>
@@ -85,7 +92,7 @@ export default function PullRequestsPage() {
       </div>
 
       {/* Filters */}
-      <Card className="rounded-xl">
+      <Card className="rounded-xl border border-input shadow-sm">
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-4 items-end">
             <div className="flex items-center gap-3">
@@ -123,11 +130,16 @@ export default function PullRequestsPage() {
       </Card>
 
       {/* PRs List */}
-      <Card className="rounded-xl">
+      <Card className="rounded-xl border border-input shadow-sm">
         <CardContent>
-          <div className="divide-y divide-input">
-            {prs.map((pr) => (
-              <div key={pr.id} className="flex flex-col gap-2 p-3 hover:bg-accent transition-colors">
+          <div className="divide-y divide-input/50">
+            {filtered.map((pr) => (
+              <motion.div
+                key={pr.id}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex flex-col gap-2 p-3 hover:bg-muted/50 transition-colors"
+              >
                 <div className="flex flex-row items-start justify-between gap-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
@@ -151,19 +163,23 @@ export default function PullRequestsPage() {
                     </div>
                     <h3 className="text-sm font-semibold">{pr.title}</h3>
                     <p className="text-xs text-muted-foreground mt-1">
-                      #{pr.number ?? "-"} • {pr.repositoryId}
+                      #{pr.number ?? "-"} • Repository #{pr.repositoryId}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-muted-foreground mt-2">
                   <span>{pr.author ?? "unknown"}</span>
-                  <span>{pr.baseBranch} ← {pr.headBranch}</span>
+                  <span className="flex items-center gap-1">
+                    <span className="font-medium">{pr.baseBranch}</span>
+                    <span className="text-primary">←</span>
+                    <span className="font-medium">{pr.headBranch}</span>
+                  </span>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </CardContent>
-        <CardFooter className="pt-4">
+        <CardFooter className="pt-4 border-t border-input/50">
           <a href="/" className="text-sm text-primary hover:underline">
             View Dashboard →
           </a>

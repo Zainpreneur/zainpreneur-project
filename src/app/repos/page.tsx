@@ -14,11 +14,15 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { GitBranch, Star, RefreshCw, Folder, Code2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { GitBranch, Star, RefreshCw, Folder, Code2, Search, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function ReposPage() {
   const [repos, setRepos] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [search, setSearch] = React.useState("");
 
   useEffect(() => {
     loadRepos();
@@ -36,6 +40,12 @@ export default function ReposPage() {
     }
   }
 
+  const filtered = repos.filter(
+    (r) =>
+      r.name.toLowerCase().includes(search.toLowerCase()) ||
+      r.fullName.toLowerCase().includes(search.toLowerCase()),
+  );
+
   if (loading) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
@@ -46,10 +56,10 @@ export default function ReposPage() {
 
   if (repos.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <Folder className="h-12 w-12 text-muted-foreground mb-4" />
+      <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
+        <Folder className="h-12 w-12 text-muted-foreground" />
         <h2 className="text-xl font-semibold">No repositories</h2>
-        <p className="text-muted-foreground mb-6">
+        <p className="text-muted-foreground max-w-sm mx-auto">
           Connect your GitHub account and sync to see your repositories here.
         </p>
         <Button onClick={() => api.syncRepos().then(() => loadRepos())}>
@@ -63,62 +73,130 @@ export default function ReposPage() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Repositories</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl font-bold tracking-tight">Repositories</h1>
+          <p className="text-muted-foreground mt-1">
             All your GitHub repositories synced locally
           </p>
         </div>
-        <Button onClick={() => loadRepos()}>
-          <RefreshCw className="h-4 w-4 mr-2" /> Refresh
-        </Button>
+        <div className="flex items-center gap-3">
+          <div className="relative w-full md:w-80">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search repositories..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <Button onClick={() => loadRepos()}>
+            <RefreshCw className="h-4 w-4 mr-2" /> Refresh
+          </Button>
+        </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {repos.map((repo) => (
-          <Card key={repo.id} className="rounded-2xl hover:shadow-md transition-shadow group">
-            <CardHeader className="pb-3">
-              <div className="flex flex-row items-center justify-between">
-                <CardTitle className="text-sm font-semibold truncate">{repo.name}</CardTitle>
-                <Badge variant={repo.isPrivate ? "destructive" : "secondary"} className="h-7 text-xs">
-                  {repo.isPrivate ? "Private" : "Public"}
-                </Badge>
-              </div>
-              {repo.description && (
-                <CardDescription className="text-xs text-muted-foreground line-clamp-2 mt-1">
-                  {repo.description}
-                </CardDescription>
-              )}
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="space-y-2">
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Code2 className="h-3 w-3" /> {repo.language ?? "Unknown"}
-                </div>
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <Folder className="h-3 w-3" /> {repo.owner}
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className="pt-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs">
-                  <Star className="h-3 w-3 text-yellow-500" />
-                  <span className="font-medium">{repo.stars}</span>
-                  <span className="text-muted-foreground ml-1">stars</span>
-                </div>
-                <a
-                  href={repo.htmlUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-primary hover:underline"
-                >
-                  View on GitHub
-                </a>
-              </div>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+      <Card className="rounded-2xl shadow-sm border border-input">
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-input/50 bg-muted/50 text-xs uppercase tracking-wider text-muted-foreground">
+                  <th className="p-4 font-medium">Repository</th>
+                  <th className="p-4 font-medium text-right">Stars</th>
+                  <th className="p-4 font-medium text-right">Forks</th>
+                  <th className="p-4 font-medium text-right">Issues</th>
+                  <th className="p-4 font-medium text-right">Size</th>
+                  <th className="p-4 font-medium">Language</th>
+                  <th className="p-4 font-medium">Visibility</th>
+                  <th className="p-4 font-medium text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="p-8 text-center text-muted-foreground">
+                      No repositories match your search.
+                    </td>
+                  </tr>
+                ) : (
+                  filtered.map((repo) => (
+                    <tr
+                      key={repo.id}
+                      className="border-b border-input/50 hover:bg-muted/50 transition-colors group"
+                    >
+                      <td className="p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-xs font-medium">
+                            {repo.language?.[0] ?? "?"}
+                          </div>
+                          <div className="flex flex-col min-w-0">
+                            <a
+                              href={repo.htmlUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-sm font-medium truncate hover:underline"
+                            >
+                              {repo.fullName}
+                            </a>
+                            <span className="text-xs text-muted-foreground truncate">
+                              {repo.description ?? "No description"}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-4 text-right">
+                        <span className="text-sm font-medium">{repo.stars}</span>
+                        <Star className="h-3 w-3 text-yellow-500 ml-1" />
+                      </td>
+                      <td className="p-4 text-right text-muted-foreground">
+                        {repo.forks}
+                      </td>
+                      <td className="p-4 text-right text-muted-foreground">
+                        {repo.openIssues}
+                      </td>
+                      <td className="p-4 text-right text-muted-foreground">
+                        {(repo.size / 1024).toFixed(1)} MB
+                      </td>
+                      <td className="p-4">
+                        <span className="text-xs font-medium text-muted-foreground">
+                          {repo.language ?? "Unknown"}
+                        </span>
+                      </td>
+                      <td className="p-4">
+                        <Badge
+                          variant={repo.isPrivate ? "destructive" : "secondary"}
+                          className="text-xs"
+                        >
+                          {repo.isPrivate ? "Private" : "Public"}
+                        </Badge>
+                      </td>
+                      <td className="p-4 text-right">
+                        <a
+                          href={repo.htmlUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-primary hover:underline flex items-center gap-1"
+                        >
+                          View on GitHub <ChevronRight className="h-3 w-3" />
+                        </a>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+        <CardFooter className="border-t border-input/50 bg-muted/50 p-4">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">
+              {filtered.length} of {repos.length} repositories
+            </span>
+            <span className="text-xs text-muted-foreground">
+              Total stars: {repos.reduce((sum, r) => sum + (r.stars ?? 0), 0)}
+            </span>
+          </div>
+        </CardFooter>
+      </Card>
     </div>
   );
 }

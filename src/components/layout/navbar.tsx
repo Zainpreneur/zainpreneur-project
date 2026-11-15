@@ -14,7 +14,7 @@ import {
   LogOut as LogOutIcon,
   User as UserIcon,
   FileText as FileTextIcon,
-  Folder,
+  Folder as FolderIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,11 +33,11 @@ export function Navbar({ user, onThemeToggle, theme }: NavbarProps) {
       window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center border-b border-input bg-background/95 backdrop-blur-md">
+    <header className="sticky top-0 z-30 flex h-14 items-center border-b border-input/50 bg-background/80 backdrop-blur-md">
       {/* Left: brand */}
       <div className="flex items-center gap-4 px-4">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <GitBranch className="h-5 w-5 text-muted-foreground" />
+          <GitBranch className="h-5 w-5 text-primary" />
           <span className="text-xl font-bold tracking-tight text-primary">
             Zainpreneur
           </span>
@@ -67,7 +67,7 @@ export function Navbar({ user, onThemeToggle, theme }: NavbarProps) {
 
         <button className="rounded-full p-1.5 text-muted-foreground hover:bg-accent" aria-label="Notifications">
           <Bell className="h-5 w-5" />
-          <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" aria-hidden="true" />
+          <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-rose-500" aria-hidden="true" />
         </button>
 
         {user ? (
@@ -97,8 +97,8 @@ function UserMenu({ user }: { user: { login: string; avatar_url?: string } }) {
         )}
         <span className="hidden sm:inline">{user.login}</span>
       </button>
-      <div className="absolute right-0 mt-2 w-48 bg-popover border border-input rounded-md shadow-lg p-1 animate-in fade-in slide-in-from-right-2 z-50">
-        <div className="flex items-center gap-3 px-3 py-2 border-b border-input">
+      <div className="absolute right-0 mt-2 w-48 bg-popover border border-input rounded-xl shadow-lg p-1 animate-in fade-in slide-in-from-right-2 z-50">
+        <div className="flex items-center gap-3 px-3 py-2 border-b border-input/50">
           <img src={user.avatar_url || ""} alt="" className="h-8 w-8 rounded-full" />
           <div>
             <p className="text-sm font-medium">{user.login}</p>

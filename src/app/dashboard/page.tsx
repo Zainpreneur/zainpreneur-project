@@ -25,8 +25,13 @@ import {
   Activity,
   ShieldCheck,
   TrendingUp,
+  Clock,
+  Folder,
+  Code,
+  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 function StatCard({
   title,
@@ -34,33 +39,60 @@ function StatCard({
   change,
   icon: Icon,
   trend,
+  description,
 }: {
   title: string;
   value: string | number;
   change?: string;
   icon: React.ElementType;
   trend: "up" | "down" | "neutral";
+  description?: string;
 }) {
   const trendColors = {
-    up: "text-green-500",
-    down: "text-red-500",
-    neutral: "text-muted-foreground",
-  };
+    up: "text-emerald-500 bg-emerald-50",
+    down: "text-rose-500 bg-rose-50",
+    neutral: "text-muted-foreground bg-muted",
+  } as const;
+
   return (
-    <Card className="rounded-2xl">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <Icon className={cn("h-4 w-4 text-muted-foreground", trendColors[trend])} />
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        {change && (
-          <div className="text-xs {trendColors[trend]} mt-1">
+    <motion.div
+      whileHover={{ y: -4 }}
+      className={cn(
+        "rounded-2xl border border-input bg-card p-5 shadow-sm transition-all",
+        trend === "down" && "border-rose-200/50",
+      )}
+    >
+      <div className="flex flex-row items-center justify-between">
+        <div className="flex flex-col gap-1">
+          <p className="text-xs font-medium text-muted-foreground">{title}</p>
+          <p className="text-2xl font-bold tracking-tight">{value}</p>
+          {description && (
+            <p className="text-xs text-muted-foreground">{description}</p>
+          )}
+        </div>
+        <div className="h-10 w-10 rounded-lg flex items-center justify-center">
+          <Icon className={cn("h-5 w-5", trendColors[trend])} />
+        </div>
+      </div>
+      {change && (
+        <div className="mt-3 flex items-center gap-1">
+          <span className={cn("text-xs font-medium", trendColors[trend].split(" ")[0])}>
             {trend === "up" ? "▲" : trend === "down" ? "▼" : "—"} {change}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+          </span>
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
+function SkeletonCard() {
+  return (
+    <div className="rounded-2xl border border-input bg-card p-5 animate-pulse">
+      <div className="h-4 w-1/3 rounded bg-muted mb-4" />
+      <div className="h-6 w-24 rounded bg-muted mb-3" />
+      <div className="h-3 w-full rounded bg-muted" />
+      <div className="h-3 w-1/2 rounded bg-muted mt-2" />
+    </div>
   );
 }
 
@@ -70,6 +102,7 @@ export default function DashboardPage() {
   const [prs, setPRs] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [healthScore, setHealthScore] = React.useState(0);
+  const [connected, setConnected] = React.useState(false);
 
   useEffect(() => {
     loadData();
@@ -78,11 +111,13 @@ export default function DashboardPage() {
   async function loadData() {
     try {
       setLoading(true);
-      const [repoRes, issueRes, prRes] = await Promise.all([
+      const [userRes, repoRes, issueRes, prRes] = await Promise.all([
+        api.getUser(),
         api.getRepos(),
         api.getIssues({ state: "all" }),
         api.getPullRequests({ state: "all" }),
       ]);
+      setConnected(!!userRes.user);
       setRepos(repoRes.repositories ?? []);
       setIssues(issueRes.issues ?? []);
       setPRs(prRes.pullRequests ?? []);
@@ -96,10 +131,10 @@ export default function DashboardPage() {
       const score = Math.round(
         Math.min(
           100,
-          (avgStars / 10) * 30 +
-            (100 - (openIssues / total) * 10) * 30 +
-            (100 - (openPRs / total) * 10) * 20 +
-            (repos.length > 0 ? 20 : 0),
+          (avgStars / 10) * 25 +
+            Math.max(0, 100 - (openIssues / total) * 10) * 25 +
+            Math.max(0, 100 - (openPRs / total) * 10) * 25 +
+            (repos.length > 0 ? 25 : 0),
         ),
       );
       setHealthScore(score);
@@ -113,13 +148,33 @@ export default function DashboardPage() {
   const openIssues = issues.filter((i) => i.state === "open").length;
   const openPRs = prs.filter((p) => p.state === "open").length;
   const totalStars = repos.reduce((sum, r) => sum + (r.stars ?? 0), 0);
+  const totalForks = repos.reduce((sum, r) => sum + (r.forks ?? 0), 0);
+
+  if (!connected) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
+        <ShieldCheck className="h-12 w-12 text-muted-foreground" />
+        <h2 className="text-xl font-semibold">Connect GitHub</h2>
+        <p className="text-muted-foreground max-w-md mx-auto">
+          Connect your GitHub account in Settings to see your dashboard overview.
+        </p>
+        <Button onClick={() => (window.location.href = "/settings")}>
+          Go to Settings
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+      >
         <div>
-          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-muted-foreground">
             Overview of your GitHub repositories and activity
           </p>
@@ -136,130 +191,197 @@ export default function DashboardPage() {
             <RefreshCw className="h-4 w-4 mr-2" /> Sync Now
           </Button>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Health Score Card - Creative Feature */}
-      <Card className="rounded-2xl border-primary bg-gradient-to-br from-primary/5 to-primary/10">
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
+      {/* Health Score Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="rounded-[2rem] border border-primary/10 bg-gradient-to-br from-primary/5 to-primary/10 p-6 shadow-sm"
+      >
+        <CardHeader className="flex flex-row items-center justify-between pb-3 mb-4">
           <div className="flex items-center gap-3">
             <ShieldCheck className="h-6 w-6 text-primary" />
             <div>
               <CardTitle className="text-lg font-bold">Repository Health Score</CardTitle>
               <CardDescription>
-                Composite score based on activity, issues, PRs, and community engagement
+                Composite score based on stars, activity, issues, and PRs
               </CardDescription>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-4xl font-bold text-primary">{healthScore}</div>
-            <div className="text-xs text-muted-foreground">
+            <div className="text-4xl font-bold tracking-tight text-primary">{healthScore}</div>
+            <div className="text-xs font-medium uppercase tracking-wider">
               {healthScore >= 80 ? "Excellent" : healthScore >= 60 ? "Good" : healthScore >= 40 ? "Fair" : "Needs Attention"}
             </div>
           </div>
         </CardHeader>
-        <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
-          <div className="flex flex-col items-center text-center">
-            <Activity className="h-5 w-5 text-primary mb-1" />
-            <span className="text-sm font-semibold">{repos.length}</span>
-            <span className="text-xs text-muted-foreground">Repositories</span>
-          </div>
-          <div className="flex flex-col items-center text-center">
-            <Star className="h-5 w-5 text-yellow-500 mb-1" />
-            <span className="text-sm font-semibold">{totalStars}</span>
-            <span className="text-xs text-muted-foreground">Total Stars</span>
-          </div>
-          <div className="flex flex-col items-center text-center">
-            <FileText className="h-5 w-5 text-blue-500 mb-1" />
-            <span className="text-sm font-semibold">{openIssues}</span>
-            <span className="text-xs text-muted-foreground">Open Issues</span>
-          </div>
-          <div className="flex flex-col items-center text-center">
-            <GitPullRequest className="h-5 w-5 text-purple-500 mb-1" />
-            <span className="text-sm font-semibold">{openPRs}</span>
-            <span className="text-xs text-muted-foreground">Open Pulls</span>
+        <CardContent className="pt-0">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <StatCard
+              title="Repositories"
+              value={repos.length}
+              icon={GitBranch}
+              trend="neutral"
+              description="Total synced repositories"
+            />
+            <StatCard
+              title="Total Stars"
+              value={totalStars}
+              icon={Star}
+              trend="up"
+              description="Across all repositories"
+            />
+            <StatCard
+              title="Open Issues"
+              value={openIssues}
+              icon={FileText}
+              trend={openIssues > 0 ? "down" : "neutral"}
+              description={openIssues > 0 ? "needs attention" : "all clear"}
+            />
+            <StatCard
+              title="Open Pulls"
+              value={openPRs}
+              icon={GitPullRequest}
+              trend={openPRs > 0 ? "down" : "neutral"}
+              description={openPRs > 0 ? "pending review" : "up to date"}
+            />
           </div>
         </CardContent>
-      </Card>
+      </motion.div>
 
-      {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <StatCard
-          title="Total Repositories"
-          value={repos.length}
-          icon={GitBranch}
-          trend="neutral"
-        />
-        <StatCard
-          title="Open Issues"
-          value={openIssues}
-          icon={FileText}
-          trend={openIssues > 0 ? "down" : "neutral"}
-        />
-        <StatCard
-          title="Open Pull Requests"
-          value={openPRs}
-          icon={GitPullRequest}
-          trend={openPRs > 0 ? "down" : "neutral"}
-        />
-        <StatCard
-          title="Total Stars"
-          value={totalStars}
-          icon={Star}
-          trend="up"
-        />
-      </div>
+      {/* Quick Actions */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="grid grid-cols-1 md:grid-cols-3 gap-4"
+      >
+        <Card className="rounded-2xl border border-input hover:border-primary/50 transition-all cursor-pointer group">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2">
+              <Folder className="h-5 w-5 text-primary group-hover:text-primary/80 transition-colors" />
+              <span className="text-sm font-medium">Browse Repositories</span>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-muted-foreground">View all synced repositories</p>
+          </CardContent>
+          <CardFooter className="pt-3">
+            <a
+              href="/repos"
+              className="text-xs text-primary font-medium hover:underline"
+            >
+              Explore →
+            </a>
+          </CardFooter>
+        </Card>
+        <Card className="rounded-2xl border border-input hover:border-blue-500/50 transition-all cursor-pointer group">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2">
+              <FileText className="h-5 w-5 text-blue-500 group-hover:text-blue-400 transition-colors" />
+              <span className="text-sm font-medium">Manage Issues</span>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-muted-foreground">Track and create issues</p>
+          </CardContent>
+          <CardFooter className="pt-3">
+            <a
+              href="/issues"
+              className="text-xs text-primary font-medium hover:underline"
+            >
+              View Issues →
+            </a>
+          </CardFooter>
+        </Card>
+        <Card className="rounded-2xl border border-input hover:border-purple-500/50 transition-all cursor-pointer group">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2">
+              <GitPullRequest className="h-5 w-5 text-purple-500 group-hover:text-purple-400 transition-colors" />
+              <span className="text-sm font-medium">Review Pull Requests</span>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-muted-foreground">Monitor open PRs</p>
+          </CardContent>
+          <CardFooter className="pt-3">
+            <a
+              href="/pull-requests"
+              className="text-xs text-primary font-medium hover:underline"
+            >
+              View PRs →
+            </a>
+          </CardFooter>
+        </Card>
+      </motion.div>
 
       {/* Recent Activity */}
-      <Card className="rounded-2xl">
-        <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <div className="h-64 flex items-center justify-center">
-              <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
-            </div>
-          ) : repos.length === 0 ? (
-            <div className="text-center py-12">
-              <AlertCircle className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-              <p className="text-muted-foreground">No repositories found. Connect your GitHub account and sync.</p>
-              <Button onClick={() => window.location.href = "/settings"} className="mt-4">
-                Connect GitHub
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {repos
-                .slice(0, 6)
-                .map((repo) => (
-                  <div key={repo.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-accent transition-colors cursor-pointer group">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+        <Card className="rounded-2xl shadow-sm border border-input">
+          <CardHeader className="flex flex-row items-center justify-between pb-3">
+            <CardTitle className="text-sm font-semibold">Recent Activity</CardTitle>
+            <a href="/repos" className="text-xs text-primary hover:underline">
+              View all
+            </a>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="space-y-3 py-4">
+                {[1, 2, 3].map((i) => (
+                  <SkeletonCard key={i} />
+                ))}
+              </div>
+            ) : repos.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <Clock className="h-10 w-10 text-muted-foreground mb-3" />
+                <h3 className="text-sm font-semibold">No activity yet</h3>
+                <p className="text-xs text-muted-foreground">
+                  Sync your repositories to see recent activity here.
+                </p>
+              </div>
+            ) : (
+              <div className="divide-y divide-input/50">
+                {repos.slice(0, 6).map((repo) => (
+                  <div
+                    key={repo.id}
+                    className="flex items-center justify-between p-3 hover:bg-muted/50 rounded-lg transition-colors cursor-pointer group"
+                  >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-sm font-medium">
+                      <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-xs font-medium">
                         {repo.language?.[0] ?? "?"}
                       </div>
-                      <div>
-                        <div className="text-sm font-medium">{repo.fullName}</div>
-                        <div className="text-xs text-muted-foreground">
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium truncate">{repo.fullName}</div>
+                        <div className="text-xs text-muted-foreground truncate">
                           {repo.description ?? "No description"}
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Star className="h-3 w-3" />
-                      <span>{repo.stars}</span>
-                      <Badge variant="outline">{repo.isPrivate ? "Private" : "Public"}</Badge>
+                      <Star className="h-3 w-3 text-yellow-500" />
+                      <span className="font-medium">{repo.stars}</span>
+                      <Badge variant="outline" className="h-6 px-2">
+                        {repo.isPrivate ? "Private" : "Public"}
+                      </Badge>
                     </div>
                   </div>
                 ))}
-            </div>
-          )}
-        </CardContent>
-        <CardFooter className="pt-4">
-          <a href="/repos" className="text-sm text-primary hover:underline">
-            View all repositories →
-          </a>
-        </CardFooter>
-      </Card>
+              </div>
+            )}
+          </CardContent>
+          <CardFooter className="pt-4 border-t border-input/50">
+            <a href="/repos" className="text-sm text-primary hover:underline">
+              View all repositories →
+            </a>
+          </CardFooter>
+        </Card>
+      </motion.div>
     </div>
   );
 }

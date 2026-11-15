@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FileText, Plus, RefreshCw, Filter, ChevronRight } from "lucide-react";
 import { z } from "zod";
+import { motion } from "framer-motion";
 
 const issueSchema = z.object({
   repositoryId: z.number(),
@@ -119,12 +120,26 @@ export default function IssuesPage() {
     }
   }
 
+  const filtered = issues.filter((i) => {
+    if (filter.state !== "all" && i.state !== filter.state) return false;
+    if (filter.repositoryId && i.repositoryId !== Number(filter.repositoryId)) return false;
+    return true;
+  });
+
+  if (loading) {
+    return (
+      <div className="flex h-[60vh] items-center justify-center">
+        <RefreshCw className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Issues</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl font-bold tracking-tight">Issues</h1>
+          <p className="text-muted-foreground mt-1">
             Track and manage issues across all repositories
           </p>
         </div>
@@ -139,7 +154,7 @@ export default function IssuesPage() {
       </div>
 
       {/* Filters */}
-      <Card className="rounded-xl">
+      <Card className="rounded-xl border border-input shadow-sm">
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-4 items-end">
             <div className="flex items-center gap-3">
@@ -148,7 +163,10 @@ export default function IssuesPage() {
                 variant="outline"
                 size="sm"
                 onClick={() =>
-                  setFilter({ ...filter, state: filter.state === "all" ? "open" : "closed" })
+                  setFilter({
+                    ...filter,
+                    state: filter.state === "all" ? "open" : "closed",
+                  })
                 }
                 className="h-9 px-3"
               >
@@ -178,87 +196,93 @@ export default function IssuesPage() {
       {openCreate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setOpenCreate(false)} />
-          <Card className="relative w-full max-w-md p-6">
-            <CardHeader>
-              <CardTitle>Create New Issue</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleCreateIssue} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="repositoryId">Repository</Label>
-                  <select
-                    id="repositoryId"
-                    className="border rounded-md px-3 py-2 text-sm bg-background"
-                    value={form.repositoryId}
-                    onChange={(e) => setForm({ ...form, repositoryId: e.target.value })}
-                  >
-                    <option value="">Select repository</option>
-                    {repos.map((r) => (
-                      <option key={r.id} value={r.id}>
-                        {r.fullName}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="title">Title</Label>
-                  <Input
-                    id="title"
-                    placeholder="Issue title"
-                    value={form.title}
-                    onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="body">Body</Label>
-                  <textarea
-                    id="body"
-                    placeholder="Description..."
-                    value={form.body}
-                    onChange={(e) => setForm({ ...form, body: e.target.value })}
-                    className="border rounded-md px-3 py-2 text-sm bg-background h-32"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="labels">Labels (comma-separated)</Label>
-                  <Input
-                    id="labels"
-                    placeholder="bug, enhancement"
-                    value={form.labels}
-                    onChange={(e) => setForm({ ...form, labels: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="assignees">Assignees (comma-separated)</Label>
-                  <Input
-                    id="assignees"
-                    placeholder="user1, user2"
-                    value={form.assignees}
-                    onChange={(e) => setForm({ ...form, assignees: e.target.value })}
-                  />
-                </div>
-              </form>
-            </CardContent>
-            <CardFooter className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setOpenCreate(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleCreateIssue} disabled={createLoading}>
-                {createLoading ? "Creating..." : "Create Issue"}
-              </Button>
-            </CardFooter>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative w-full max-w-md p-6"
+          >
+            <Card className="rounded-2xl shadow-lg">
+              <CardHeader>
+                <CardTitle>Create New Issue</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleCreateIssue} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="repositoryId">Repository</Label>
+                    <select
+                      id="repositoryId"
+                      className="border rounded-md px-3 py-2 text-sm bg-background"
+                      value={form.repositoryId}
+                      onChange={(e) => setForm({ ...form, repositoryId: e.target.value })}
+                    >
+                      <option value="">Select repository</option>
+                      {repos.map((r) => (
+                        <option key={r.id} value={r.id}>
+                          {r.fullName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Title</Label>
+                    <Input
+                      id="title"
+                      placeholder="Issue title"
+                      value={form.title}
+                      onChange={(e) => setForm({ ...form, title: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="body">Body</Label>
+                    <textarea
+                      id="body"
+                      placeholder="Description..."
+                      value={form.body}
+                      onChange={(e) => setForm({ ...form, body: e.target.value })}
+                      className="border rounded-md px-3 py-2 text-sm bg-background h-32"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="labels">Labels (comma-separated)</Label>
+                    <Input
+                      id="labels"
+                      placeholder="bug, enhancement"
+                      value={form.labels}
+                      onChange={(e) => setForm({ ...form, labels: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="assignees">Assignees (comma-separated)</Label>
+                    <Input
+                      id="assignees"
+                      placeholder="user1, user2"
+                      value={form.assignees}
+                      onChange={(e) => setForm({ ...form, assignees: e.target.value })}
+                    />
+                  </div>
+                </form>
+              </CardContent>
+              <CardFooter className="flex justify-end gap-2 p-4">
+                <Button variant="outline" onClick={() => setOpenCreate(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleCreateIssue} disabled={createLoading}>
+                  {createLoading ? "Creating..." : "Create Issue"}
+                </Button>
+              </CardFooter>
+            </Card>
+          </motion.div>
         </div>
       )}
 
       {/* Issues List */}
-      <Card className="rounded-xl">
+      <Card className="rounded-xl border border-input shadow-sm">
         <CardContent>
           {loading ? (
             <div className="h-[400px] flex items-center justify-center">
               <RefreshCw className="h-8 w-8 animate-spin" />
             </div>
-          ) : issues.length === 0 ? (
+          ) : filtered.length === 0 ? (
             <div className="text-center py-12">
               <FileText className="h-10 w-10 text-muted-foreground mb-4" />
               <h3 className="text-sm font-semibold">No issues</h3>
@@ -267,9 +291,14 @@ export default function IssuesPage() {
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-input">
-              {issues.map((issue) => (
-                <div key={issue.id} className="flex flex-col gap-2 p-3 hover:bg-accent transition-colors cursor-pointer group">
+            <div className="divide-y divide-input/50">
+              {filtered.map((issue) => (
+                <motion.div
+                  key={issue.id}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="flex flex-col gap-2 p-3 hover:bg-muted/50 transition-colors cursor-pointer group"
+                >
                   <div className="flex flex-row items-start justify-between gap-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
@@ -287,7 +316,7 @@ export default function IssuesPage() {
                       </div>
                       <h3 className="text-sm font-semibold">{issue.title}</h3>
                       <p className="text-xs text-muted-foreground mt-1">
-                        #{issue.number ?? "-"} • {issue.repositoryId}
+                        #{issue.number ?? "-"} • Repository #{issue.repositoryId}
                       </p>
                     </div>
                     <Button
@@ -303,12 +332,12 @@ export default function IssuesPage() {
                     <span>{issue.author ?? "unknown"}</span>
                     <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           )}
         </CardContent>
-        <CardFooter className="pt-4">
+        <CardFooter className="pt-4 border-t border-input/50">
           <a href="/" className="text-sm text-primary hover:underline">
             View Dashboard →
           </a>

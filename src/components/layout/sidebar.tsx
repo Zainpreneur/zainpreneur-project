@@ -11,12 +11,10 @@ import {
   GitPullRequest,
   Settings,
   ShieldAlert,
-  Menu,
   ChevronLeft,
-  ChevronRight,
-  LogOut,
   User,
   Folder,
+  Activity,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -25,6 +23,7 @@ const navigation = [
   { name: "Repositories", href: "/repos", icon: Folder },
   { name: "Issues", href: "/issues", icon: FileText },
   { name: "Pull Requests", href: "/pull-requests", icon: GitPullRequest },
+  { name: "Activity", href: "/dashboard", icon: Activity },
   { name: "Settings", href: "/settings", icon: Settings },
 ] as const;
 
@@ -41,16 +40,19 @@ export function Sidebar({ user, isCollapsed = false, onToggle }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "fixed left-0 top-0 bottom-0 z-40 border-r border-input bg-background transition-all duration-300",
+        "fixed left-0 top-0 bottom-0 z-40 border-r border-input/50 bg-background/80 backdrop-blur-md transition-all duration-300",
         isCollapsed ? "w-16 -ml-60" : "w-64 ml-0",
       )}
     >
       <div className="flex h-full flex-col">
         {/* Header */}
-        <div className={cn("flex items-center justify-between h-14 px-4 border-b border-input", isCollapsed && "justify-center")}>
+        <div className={cn("flex items-center justify-between h-14 px-4 border-b border-input/50", isCollapsed && "justify-center")}>
           {!isCollapsed && (
             <>
-              <span className="text-xl font-bold tracking-tight text-primary">Zainpreneur</span>
+              <div className="flex items-center gap-2">
+                <GitBranch className="h-5 w-5 text-primary" />
+                <span className="text-xl font-bold tracking-tight text-primary">Zainpreneur</span>
+              </div>
             </>
           )}
           <button
@@ -80,9 +82,9 @@ export function Sidebar({ user, isCollapsed = false, onToggle }: SidebarProps) {
                   }
                 }}
                 className={cn(
-                  "flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  "flex items-center rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
                   isActive
-                    ? "bg-primary text-primary-foreground"
+                    ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
                     : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
                   isCollapsed ? "justify-center px-2" : "",
                 )}
@@ -95,7 +97,7 @@ export function Sidebar({ user, isCollapsed = false, onToggle }: SidebarProps) {
         </nav>
 
         {/* Footer - user + logout */}
-        <div className={cn("p-3 border-t border-input", isCollapsed && "justify-center")}>
+        <div className={cn("p-3 border-t border-input/50", isCollapsed && "justify-center")}>
           <div className="flex items-center gap-3">
             {user?.avatar_url && (
               <img
@@ -113,7 +115,7 @@ export function Sidebar({ user, isCollapsed = false, onToggle }: SidebarProps) {
           {!isCollapsed && (
             <button
               onClick={() => router.push("/settings")}
-              className="mt-2 w-full flex items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-accent"
+              className="mt-2 w-full flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-muted-foreground hover:bg-accent transition-colors"
             >
               <Settings className="h-4 w-4" /> Settings
             </button>
