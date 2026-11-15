@@ -139,7 +139,7 @@ export default function IssuesPage() {
   if (loading) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
-        <RefreshCw className="h-8 w-8 animate-spin" />
+        <RefreshCw className="h-8 w-8 shrink-0 animate-spin" />
       </div>
     );
   }
@@ -155,7 +155,7 @@ export default function IssuesPage() {
         </div>
         <div className="flex items-center gap-3">
           <Button onClick={() => setOpenCreate(true)} disabled={repos.length === 0} className="btn-professional">
-            <Plus className="h-4 w-4 mr-2" /> New Issue
+            <Plus className="h-4 w-4 shrink-0 mr-2" /> New Issue
           </Button>
           <Button onClick={() => {
             setSyncing(true);
@@ -167,7 +167,7 @@ export default function IssuesPage() {
               .catch((err: any) => toast({ title: "Sync failed", description: err?.message ?? "Failed to sync" }))
               .finally(() => setSyncing(false));
           }} className="btn-professional">
-            {syncing ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />} {syncing ? "Syncing..." : "Refresh"}
+            {syncing ? <RefreshCw className="h-4 w-4 shrink-0 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 shrink-0 mr-2" />} {syncing ? "Syncing..." : "Refresh"}
           </Button>
         </div>
       </div>
@@ -197,7 +197,7 @@ export default function IssuesPage() {
               <select
                 value={filter.repositoryId}
                 onChange={(e) => setFilter({ ...filter, repositoryId: e.target.value })}
-                className="input-pro"
+                className="select-pro"
               >
                 <option value="">All Repositories</option>
                 {repos.map((r) => (
@@ -230,7 +230,7 @@ export default function IssuesPage() {
                     <Label htmlFor="repositoryId">Repository</Label>
                     <select
                       id="repositoryId"
-                      className="input-pro"
+                      className="select-pro"
                       value={form.repositoryId}
                       onChange={(e) => setForm({ ...form, repositoryId: e.target.value })}
                     >
@@ -302,11 +302,11 @@ export default function IssuesPage() {
         <CardContent>
           {loading ? (
             <div className="h-[400px] flex items-center justify-center">
-              <RefreshCw className="h-8 w-8 animate-spin" />
+              <RefreshCw className="h-8 w-8 shrink-0 animate-spin" />
             </div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-16">
-              <FileText className="h-12 w-12 text-muted-foreground mb-4" />
+              <FileText className="h-12 w-12 shrink-0 text-muted-foreground mb-4" />
               <h3 className="text-sm font-semibold">No issues</h3>
               <p className="text-muted-foreground text-sm">
                 No issues match your current filters.
@@ -352,7 +352,7 @@ export default function IssuesPage() {
                   </div>
                   <div className="flex items-center justify-between text-xs text-muted-foreground mt-2">
                     <span>{issue.author ?? "unknown"}</span>
-                    <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <ChevronRight className="h-3 w-3 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 </motion.div>
               ))}

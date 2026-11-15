@@ -99,23 +99,36 @@ function StatCard({
 }
 
 function HealthGauge({ score }: { score: number }) {
-  const getColor = (s: number) => {
-    if (s >= 80) return "text-emerald-500 bg-emerald-50 border-emerald-100 text-gradient";
-    if (s >= 60) return "text-blue-500 bg-blue-50 border-blue-100";
-    if (s >= 40) return "text-amber-500 bg-amber-50 border-amber-100";
-    return "text-rose-500 bg-rose-50 border-rose-100";
-  };
+  const isEmpty = score === 0;
 
-  const colorClass = getColor(score);
-  const label =
-    score >= 80 ? "Excellent" : score >= 60 ? "Good" : score >= 40 ? "Fair" : "Needs Attention";
+  const colorClass = isEmpty
+    ? "text-muted-foreground bg-muted border-muted/30"
+    : score >= 80
+      ? "text-emerald-500 bg-emerald-50 border-emerald-100"
+      : score >= 60
+        ? "text-blue-500 bg-blue-50 border-blue-100"
+        : score >= 40
+          ? "text-amber-500 bg-amber-50 border-amber-100"
+          : "text-rose-500 bg-rose-50 border-rose-100";
+
+  const label = isEmpty
+    ? "Awaiting Sync"
+    : score >= 80
+      ? "Excellent"
+      : score >= 60
+        ? "Good"
+        : score >= 40
+          ? "Fair"
+          : "Needs Attention";
+
+  const displayValue = isEmpty ? "—" : score;
 
   return (
     <Card className="rounded-xl border border-input/50 shadow-lg overflow-hidden relative group">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       <CardHeader className="flex flex-row items-center justify-between pb-4">
         <div className="flex items-center gap-3">
-          <ShieldCheck className="h-6 w-6 text-primary" />
+          <ShieldCheck className="h-6 w-6 shrink-0 text-primary" />
           <div>
             <CardTitle className="text-lg font-bold tracking-tight">Repository Health Score</CardTitle>
             <CardDescription>
@@ -124,48 +137,12 @@ function HealthGauge({ score }: { score: number }) {
           </div>
         </div>
         <div className="text-right">
-          <div className="text-4xl font-bold tracking-tighter">{score}</div>
+          <div className="text-4xl font-bold tracking-tighter">{displayValue}</div>
           <div className={cn("text-xs font-semibold uppercase tracking-wider", colorClass.split(" ")[0])}>
             {label}
           </div>
         </div>
       </CardHeader>
-      <CardContent className="pt-0">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard
-            title="Repositories"
-            value={0}
-            icon={GitBranch}
-            trend="neutral"
-            description="Total synced"
-            color="blue"
-          />
-          <StatCard
-            title="Total Stars"
-            value={0}
-            icon={Star}
-            trend="up"
-            description="Across repos"
-            color="yellow"
-          />
-          <StatCard
-            title="Open Issues"
-            value={0}
-            icon={FileText}
-            trend="down"
-            description="Needs attention"
-            color="rose"
-          />
-          <StatCard
-            title="Open Pulls"
-            value={0}
-            icon={GitPullRequest}
-            trend="down"
-            description="Pending review"
-            color="amber"
-          />
-        </div>
-      </CardContent>
     </Card>
   );
 }
@@ -266,7 +243,7 @@ export default function DashboardPage() {
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted border border-input text-xs">
-            <RefreshCw className="h-3 w-3 {syncStatus.syncing ? 'animate-spin' : ''}" />
+            <RefreshCw className="h-3 w-3 shrink-0 {syncStatus.syncing ? 'animate-spin' : ''}" />
             <span className={syncStatus.syncing ? "text-primary" : "text-muted-foreground"}>
               {syncStatus.syncing ? "Syncing..." : syncStatus.lastSynced ? `Last synced ${syncStatus.lastSynced}` : "Auto-sync enabled"}
             </span>
@@ -331,7 +308,7 @@ export default function DashboardPage() {
           <CardHeader className="pb-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                <Folder className="h-5 w-5" />
+                <Folder className="h-5 w-5 shrink-0" />
               </div>
               <span className="text-sm font-medium">Browse Repositories</span>
             </div>
@@ -345,7 +322,7 @@ export default function DashboardPage() {
               className="text-xs text-primary font-medium hover:underline flex items-center gap-1"
             >
               Explore →
-              <ChevronRight className="h-3 w-3" />
+              <ChevronRight className="h-3 w-3 shrink-0" />
             </a>
           </CardFooter>
         </Card>
@@ -353,7 +330,7 @@ export default function DashboardPage() {
           <CardHeader className="pb-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                <FileText className="h-5 w-5" />
+                <FileText className="h-5 w-5 shrink-0" />
               </div>
               <span className="text-sm font-medium">Manage Issues</span>
             </div>
@@ -367,7 +344,7 @@ export default function DashboardPage() {
               className="text-xs text-primary font-medium hover:underline flex items-center gap-1"
             >
               View Issues →
-              <ChevronRight className="h-3 w-3" />
+              <ChevronRight className="h-3 w-3 shrink-0" />
             </a>
           </CardFooter>
         </Card>
@@ -375,7 +352,7 @@ export default function DashboardPage() {
           <CardHeader className="pb-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center group-hover:bg-purple-200 transition-colors">
-                <GitPullRequest className="h-5 w-5" />
+                <GitPullRequest className="h-5 w-5 shrink-0" />
               </div>
               <span className="text-sm font-medium">Review Pull Requests</span>
             </div>
@@ -389,7 +366,7 @@ export default function DashboardPage() {
               className="text-xs text-primary font-medium hover:underline flex items-center gap-1"
             >
               View PRs →
-              <ChevronRight className="h-3 w-3" />
+              <ChevronRight className="h-3 w-3 shrink-0" />
             </a>
           </CardFooter>
         </Card>
@@ -412,12 +389,12 @@ export default function DashboardPage() {
             {loading ? (
               <div className="space-y-3 py-4">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-4 w-3/4 rounded-md bg-muted animate-pulse" />
+                  <div key={i} className="h-4 w-3/4 rounded-md bg-muted animate-pulse shrink-0" />
                 ))}
               </div>
             ) : repos.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center space-y-3">
-                <Clock className="h-10 w-10 text-muted-foreground" />
+                <Clock className="h-10 w-10 shrink-0 text-muted-foreground" />
                 <h3 className="text-sm font-semibold">No activity yet</h3>
                 <p className="text-xs text-muted-foreground">
                   Repositories are being synced automatically. Please wait a moment.
@@ -431,7 +408,7 @@ export default function DashboardPage() {
                     className="flex items-center justify-between p-4 hover:bg-accent/30 rounded-lg transition-colors cursor-pointer group"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-xs font-medium">
+                      <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-xs font-medium shrink-0">
                         {repo.language?.[0] ?? "?"}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -442,7 +419,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Star className="h-3 w-3 text-yellow-500" />
+                      <Star className="h-3 w-3 shrink-0 text-yellow-500" />
                       <span className="font-medium">{repo.stars}</span>
                       <Badge variant="outline" className="h-6 px-2 text-xs font-medium">
                         {repo.isPrivate ? "Private" : "Public"}

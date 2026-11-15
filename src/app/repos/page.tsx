@@ -156,7 +156,7 @@ export default function ReposPage() {
                       </td>
                       <td className="p-6 text-right">
                         <span className="text-sm font-medium">{repo.stars}</span>
-                        <Star className="h-3 w-3 text-yellow-500 ml-1" />
+                        <Star className="h-3 w-3 shrink-0 text-yellow-500 ml-1" />
                       </td>
                       <td className="p-6 text-right text-muted-foreground">
                         {repo.forks}

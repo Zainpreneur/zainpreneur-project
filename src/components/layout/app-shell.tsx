@@ -22,6 +22,11 @@ export function AppShell({ children }: AppShellProps) {
     }
   };
 
+  // Sidebar width constants (must match sidebar component)
+  const SIDEBAR_WIDTH_EXPANDED = "lg:pl-[288px]";
+  const SIDEBAR_WIDTH_COLLAPSED = "lg:pl-[80px]";
+  const MOBILE_DRAWER_WIDTH = "lg:pl-0";
+
   return (
     <Providers>
       <Navbar
@@ -46,8 +51,8 @@ export function AppShell({ children }: AppShellProps) {
         />
         <main
           className={cn(
-            "flex-1 overflow-y-auto p-6 lg:p-8 transition-all duration-300",
-            isCollapsed ? "lg:pl-0" : "lg:pl-20",
+            "flex-1 overflow-y-auto p-6 lg:p-8 transition-all duration-300 ease-in-out",
+            isMobileMenuOpen ? MOBILE_DRAWER_WIDTH : isCollapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED,
           )}
         >
           {children}
@@ -56,4 +61,3 @@ export function AppShell({ children }: AppShellProps) {
     </Providers>
   );
 }
-

@@ -67,7 +67,7 @@ export default function PullRequestsPage() {
   if (loading) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
-        <RefreshCw className="h-8 w-8 animate-spin" />
+        <RefreshCw className="h-8 w-8 shrink-0 animate-spin" />
       </div>
     );
   }
@@ -75,7 +75,7 @@ export default function PullRequestsPage() {
   if (filtered.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-        <GitPullRequest className="h-12 w-12 text-muted-foreground" />
+        <GitPullRequest className="h-12 w-12 shrink-0 text-muted-foreground" />
         <h2 className="text-xl font-semibold">No pull requests</h2>
         <p className="text-muted-foreground max-w-sm mx-auto">
           Sync your repositories to see pull requests here.
@@ -90,7 +90,7 @@ export default function PullRequestsPage() {
             .catch((err: any) => toast({ title: "Sync failed", description: err?.message ?? "Failed to sync" }))
             .finally(() => setSyncing(false));
         }} className="btn-professional">
-          <RefreshCw className="h-4 w-4 mr-2" /> Sync Now
+          <RefreshCw className="h-4 w-4 shrink-0 mr-2" /> Sync Now
         </Button>
       </div>
     );
@@ -115,7 +115,7 @@ export default function PullRequestsPage() {
             .catch((err: any) => toast({ title: "Sync failed", description: err?.message ?? "Failed to sync" }))
             .finally(() => setSyncing(false));
         }} className="btn-professional">
-          {syncing ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />} {syncing ? "Syncing..." : "Refresh"}
+          {syncing ? <RefreshCw className="h-4 w-4 shrink-0 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 shrink-0 mr-2" />} {syncing ? "Syncing..." : "Refresh"}
         </Button>
       </div>
 
@@ -145,7 +145,7 @@ export default function PullRequestsPage() {
               <select
                 value={filter.repositoryId}
                 onChange={(e) => setFilter({ ...filter, repositoryId: e.target.value })}
-                className="input-pro"
+                className="select-pro"
               >
                 <option value="">All Repositories</option>
                 {repos.map((r) => (
@@ -216,4 +216,3 @@ export default function PullRequestsPage() {
     </div>
   );
 }
-

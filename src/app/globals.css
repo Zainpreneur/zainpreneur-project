@@ -66,29 +66,23 @@
 
 @layer base {
   * {
-    @apply border-border;
+    box-sizing: border-box;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
 /* --------------------------------------------------------------
-   Professional Enterprise Theme
+   Design System — Professional Enterprise Theme
    -------------------------------------------------------------- */
 
-/* Sharp, clean borders - no sketchy organic shapes */
 .card-professional {
   @apply rounded-xl border border-input/50 bg-card shadow-sm;
 }
 
-/* Subtle gradient for hero/accent areas */
-.gradient-pro {
-  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 80) 100%);
-}
-
-/* Clean button states */
+/* Button base states */
 .btn-pro {
   @apply px-4 py-2.5 rounded-lg font-medium transition-all duration-200;
 }
@@ -107,14 +101,24 @@
   @apply rounded-lg border border-input bg-background px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary;
 }
 
+/* Native select styling — consistent with input-pro */
+.select-pro {
+  @apply rounded-lg border border-input bg-background px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary cursor-pointer;
+}
+
 /* Badge styling */
 .badge-pro {
-  @apply rounded-full border px-2.5 py-0.5 text-xs font-semibold;
+  @apply inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold leading-none;
 }
 
 /* Skeleton */
 .skeleton {
   @apply animate-pulse rounded-md bg-muted;
+}
+
+/* Page canvas */
+.page-canvas {
+  @apply bg-slate-50 dark:bg-background min-h-screen;
 }
 
 /* Theme overrides */
