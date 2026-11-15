@@ -15,7 +15,7 @@ export default function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-sm font-medium mb-8"
           >
-            <Rocket className="h-4 w-4" /> v1.0.0 — Live
+            <Rocket className="h-4 w-4" /> Internal — Team Access Only
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -24,17 +24,17 @@ export default function HomePage() {
             className="text-5xl md:text-7xl font-bold tracking-tight text-foreground mb-6"
           >
             GitHub Management,<br />
-            <span className="text-primary">Reimagined.</span>
+            <span className="text-primary">Built for Zainpreneur.</span>
           </motion.h1>
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 0 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto"
           >
-            The comprehensive GitHub repository, issue, and pull request
-            management dashboard for Zainpreneur. Sync, track, and manage all
-            your repositories from one beautiful place.
+            The internal GitHub repository, issue, and pull request management
+            dashboard for Zainpreneur and team. Sync, track, and manage all your
+            repositories from one secure place.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -50,10 +50,10 @@ export default function HomePage() {
               <Star className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
-              href="/settings"
+              href="/repos"
               className="px-8 py-4 rounded-xl border border-input bg-background text-foreground font-semibold hover:bg-accent transition-colors"
             >
-              Connect GitHub
+              Browse Repositories
             </Link>
           </motion.div>
         </div>
@@ -66,7 +66,7 @@ export default function HomePage() {
             {
               icon: GitBranch,
               title: "Repository Sync",
-              desc: "One-click sync of all your GitHub repositories with full metadata, stars, forks, and language stats stored locally.",
+              desc: "One-click sync of all team GitHub repositories with full metadata, stars, forks, and language stats stored locally.",
             },
             {
               icon: FileText,
@@ -96,31 +96,25 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-24 px-6 bg-primary/5 border-t border-input">
+      {/* Team Note */}
+      <section className="py-24 px-6 bg-muted/50 border-t border-input">
         <div className="max-w-3xl mx-auto text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-3xl font-bold text-foreground mb-4"
+            className="text-2xl font-bold text-foreground mb-4"
           >
-            Ready to manage your GitHub?
+            Internal Platform — Zainpreneur Team Only
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-muted-foreground mb-8"
+            className="text-muted-foreground mb-8 max-w-md mx-auto"
           >
-            Connect your GitHub token and start managing your repositories in seconds.
+            This is a private, self-hosted GitHub management system. Access is
+            restricted to the Zainpreneur team. Your GitHub token is encrypted
+            at rest and never leaves your environment.
           </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 transition-colors"
-          >
-            Connect GitHub Account
-            <GitBranch className="h-4 w-4" />
-          </motion.div>
         </div>
       </section>
     </div>

@@ -19,7 +19,7 @@ export async function resolveGitHubToken(): Promise<string> {
   }
 
   throw new Error(
-    "No GitHub token available. Set GITHUB_TOKEN in .env.local or authenticate via Settings.",
+    "No GitHub token available. Set GITHUB_TOKEN in .env.local.",
   );
 }
 
