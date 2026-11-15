@@ -1,15 +1,14 @@
 import { NextResponse } from "next/server";
-import { getDb } from "@/lib/db";
+import { db } from "@/lib/db";
 import { users } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { auditLog } from "@/lib/audit";
 
 export async function POST() {
   try {
-    const db = await getDb();
-    const [user] = await db.select().from(users).limit(1);
+    const [user] = db.select().from(users).limit(1).all() as any[];
     if (user) {
-      await db.delete(users).where(eq(users.id, user.id));
+      db.delete(users).where(eq(users.id, user.id)).run();
       await auditLog({
         action: "auth.signout",
         entityType: "user",

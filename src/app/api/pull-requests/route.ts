@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getDb } from "@/lib/db";
+import { db } from "@/lib/db";
 import { pullRequests } from "@/lib/schema";
 import { desc, eq, and, or, ilike } from "drizzle-orm";
 
@@ -10,7 +10,6 @@ export async function GET(req: Request) {
     const repoId = searchParams.get("repositoryId");
     const q = searchParams.get("q");
 
-    const db = await getDb();
     const conditions: Array<any> = [];
     if (state !== "all") conditions.push(eq(pullRequests.state, state));
     if (repoId) conditions.push(eq(pullRequests.repositoryId, Number(repoId)));
@@ -18,11 +17,12 @@ export async function GET(req: Request) {
 
     const where = conditions.length ? and(...conditions) : undefined;
 
-    const data = await db
+    const data = db
       .select()
       .from(pullRequests)
       .where(where)
-      .orderBy(desc(pullRequests.updatedAt));
+      .orderBy(desc(pullRequests.updatedAt))
+      .all() as any[];
     return NextResponse.json({ pullRequests: data });
   } catch (error) {
     return NextResponse.json(

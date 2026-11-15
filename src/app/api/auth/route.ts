@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { validateToken } from "@/lib/github";
-import { getDb } from "@/lib/db";
+import { db } from "@/lib/db";
 import { users } from "@/lib/schema";
 import { encrypt } from "@/lib/crypto";
 import { auditLog } from "@/lib/audit";
@@ -11,8 +11,7 @@ import { eq } from "drizzle-orm";
  */
 export async function GET() {
   try {
-    const db = await getDb();
-    const [user] = await db.select().from(users).limit(1);
+    const [user] = db.select().from(users).limit(1).all() as any[];
     if (!user) {
       return NextResponse.json({ user: null }, { status: 200 });
     }
@@ -53,12 +52,11 @@ export async function POST(req: Request) {
     const encrypted = encrypt(token);
     const now = new Date();
 
-    const db = await getDb();
-    const [existing] = await db.select().from(users).limit(1);
+    const [existing] = db.select().from(users).limit(1).all() as any[];
 
     let dbUser;
     if (existing) {
-      [dbUser] = await db
+      [dbUser] = db
         .update(users)
         .set({
           githubId: githubUser.id,
@@ -71,9 +69,10 @@ export async function POST(req: Request) {
           updatedAt: now,
         })
         .where(eq(users.id, existing.id))
-        .returning();
+        .returning()
+        .all() as any[];
     } else {
-      [dbUser] = await db
+      [dbUser] = db
         .insert(users)
         .values({
           githubId: githubUser.id,
@@ -86,7 +85,8 @@ export async function POST(req: Request) {
           createdAt: now,
           updatedAt: now,
         })
-        .returning();
+        .returning()
+        .all() as any[];
     }
 
     await auditLog({
@@ -118,10 +118,9 @@ export async function POST(req: Request) {
  */
 export async function DELETE() {
   try {
-    const db = await getDb();
-    const [user] = await db.select().from(users).limit(1);
+    const [user] = db.select().from(users).limit(1).all() as any[];
     if (user) {
-      await db.delete(users).where(eq(users.id, user.id));
+      db.delete(users).where(eq(users.id, user.id)).run();
       await auditLog({
         action: "auth.disconnect",
         entityType: "user",

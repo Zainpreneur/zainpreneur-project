@@ -1,22 +1,23 @@
 import { NextResponse } from "next/server";
 import { getOctokit } from "@/lib/github";
-import { getDb } from "@/lib/db";
+import { db } from "@/lib/db";
 import {
   repositories,
   issues,
   pullRequests,
 } from "@/lib/schema";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { auditLog } from "@/lib/audit";
 
 const NOW = new Date();
 
-async function upsertRepo(db: any, repo: any): Promise<number> {
-  const [existing] = await db
+function upsertRepo(repo: any) {
+  const [existing] = db
     .select()
     .from(repositories)
     .where(eq(repositories.githubId, repo.id))
-    .limit(1);
+    .limit(1)
+    .all() as any[];
 
   const payload = {
     githubId: repo.id,
@@ -41,21 +42,22 @@ async function upsertRepo(db: any, repo: any): Promise<number> {
   };
 
   if (existing) {
-    await db.update(repositories).set(payload).where(eq(repositories.id, existing.id));
+    db.update(repositories).set(payload).where(eq(repositories.id, existing.id)).run();
     return existing.id;
   } else {
-    const [inserted] = await db.insert(repositories).values(payload).returning();
-    return inserted.id;
+    const result = db.insert(repositories).values(payload).run();
+    return Number(result.lastInsertRowid);
   }
 }
 
-async function upsertIssues(db: any, repoId: number, issueList: any[]) {
+function upsertIssues(repoId: number, issueList: any[]) {
   for (const issue of issueList) {
-    const [existing] = await db
+    const [existing] = db
       .select()
       .from(issues)
       .where(eq(issues.githubId, issue.id))
-      .limit(1);
+      .limit(1)
+      .all() as any[];
 
     const payload = {
       githubId: issue.id,
@@ -76,20 +78,21 @@ async function upsertIssues(db: any, repoId: number, issueList: any[]) {
     };
 
     if (existing) {
-      await db.update(issues).set(payload).where(eq(issues.id, existing.id));
+      db.update(issues).set(payload).where(eq(issues.id, existing.id)).run();
     } else {
-      await db.insert(issues).values(payload);
+      db.insert(issues).values(payload).run();
     }
   }
 }
 
-async function upsertPullRequests(db: any, repoId: number, prList: any[]) {
+function upsertPullRequests(repoId: number, prList: any[]) {
   for (const pr of prList) {
-    const [existing] = await db
+    const [existing] = db
       .select()
       .from(pullRequests)
       .where(eq(pullRequests.githubId, pr.id))
-      .limit(1);
+      .limit(1)
+      .all() as any[];
 
     const payload = {
       githubId: pr.id,
@@ -111,9 +114,9 @@ async function upsertPullRequests(db: any, repoId: number, prList: any[]) {
     };
 
     if (existing) {
-      await db.update(pullRequests).set(payload).where(eq(pullRequests.id, existing.id));
+      db.update(pullRequests).set(payload).where(eq(pullRequests.id, existing.id)).run();
     } else {
-      await db.insert(pullRequests).values(payload);
+      db.insert(pullRequests).values(payload).run();
     }
   }
 }
@@ -123,7 +126,6 @@ export async function POST() {
     // Ensure token is available
     const octokit = await getOctokit();
 
-    const db = await getDb();
     const repos = await octokit.rest.repos.listForAuthenticatedUser({
       per_page: 100,
       sort: "updated",
@@ -135,7 +137,7 @@ export async function POST() {
     let syncedPRs = 0;
 
     for (const repo of repos.data) {
-      const repoId = await upsertRepo(db, repo);
+      const repoId = upsertRepo(repo);
       syncedRepos++;
 
       // Sync issues (filter out pull requests - GitHub issues endpoint includes PRs)
@@ -148,7 +150,7 @@ export async function POST() {
       const onlyIssues = issueRes.data.filter(
         (i: any) => !(i as any).pull_request,
       );
-      await upsertIssues(db, repoId, onlyIssues);
+      upsertIssues(repoId, onlyIssues);
       syncedIssues += onlyIssues.length;
 
       // Sync pull requests
@@ -158,7 +160,7 @@ export async function POST() {
         state: "all",
         per_page: 100,
       });
-      await upsertPullRequests(db, repoId, prRes.data);
+      upsertPullRequests(repoId, prRes.data);
       syncedPRs += prRes.data.length;
     }
 

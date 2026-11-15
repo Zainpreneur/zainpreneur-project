@@ -1,4 +1,4 @@
-import { getDb } from "./db";
+import { db } from "./db";
 import { auditLogs } from "./schema";
 
 export async function auditLog(input: {
@@ -10,8 +10,7 @@ export async function auditLog(input: {
   ipAddress?: string;
 }) {
   try {
-    const db = await getDb();
-    await db.insert(auditLogs).values({
+    db.insert(auditLogs).values({
       action: input.action,
       entityType: input.entityType,
       entityId: input.entityId ?? null,
@@ -19,7 +18,7 @@ export async function auditLog(input: {
       actor: input.actor,
       ipAddress: input.ipAddress ?? null,
       createdAt: new Date(),
-    });
+    }).run();
   } catch (error) {
     // Audit logging should never break the main flow
     console.error("Audit log failed:", error);

@@ -1,6 +1,6 @@
 import { Octokit } from "@octokit/rest";
 import { decrypt } from "./crypto";
-import { getDb } from "./db";
+import { db } from "./db";
 import { users } from "./schema";
 import { eq } from "drizzle-orm";
 
@@ -13,7 +13,7 @@ export async function resolveGitHubToken(): Promise<string> {
     return process.env.GITHUB_TOKEN;
   }
 
-  const [user] = await (await getDb()).select().from(users).limit(1);
+  const [user] = db.select().from(users).limit(1).all() as any[];
   if (user?.tokenEncrypted) {
     return decrypt(user.tokenEncrypted);
   }

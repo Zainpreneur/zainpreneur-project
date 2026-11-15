@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getDb } from "@/lib/db";
+import { db } from "@/lib/db";
 import { issues, repositories } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
@@ -21,16 +21,17 @@ export async function PATCH(
     const body = await req.json();
     const input = updateSchema.parse(body);
 
-    const db = await getDb();
-    const [existing] = await db.select().from(issues).where(eq(issues.id, issueId));
+    const [existing] = db.select().from(issues).where(eq(issues.id, issueId)).limit(1).all() as any[];
     if (!existing) {
       return NextResponse.json({ error: "Issue not found" }, { status: 404 });
     }
 
-    const [repo] = await db
+    const [repo] = db
       .select()
       .from(repositories)
-      .where(eq(repositories.id, existing.repositoryId));
+      .where(eq(repositories.id, existing.repositoryId))
+      .limit(1)
+      .all() as any[];
 
     // Update on GitHub if it's a GitHub-synced issue
     if (existing.githubId && repo) {
@@ -50,7 +51,7 @@ export async function PATCH(
     }
 
     const now = new Date();
-    const [updated] = await db
+    const [updated] = db
       .update(issues)
       .set({
         ...(input.state ? { state: input.state, closedAt: input.state === "closed" ? now : null } : {}),
@@ -59,7 +60,8 @@ export async function PATCH(
         updatedAt: now,
       })
       .where(eq(issues.id, issueId))
-      .returning();
+      .returning()
+      .all() as any[];
 
     await auditLog({
       action: "issue.update",

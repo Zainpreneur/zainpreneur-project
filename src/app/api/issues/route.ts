@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getDb } from "@/lib/db";
+import { db } from "@/lib/db";
 import { issues, repositories } from "@/lib/schema";
 import { eq, desc, and, or, ilike } from "drizzle-orm";
 import { z } from "zod";
@@ -21,7 +21,6 @@ export async function GET(req: Request) {
     const repoId = searchParams.get("repositoryId");
     const q = searchParams.get("q");
 
-    const db = await getDb();
     const conditions: Array<any> = [];
     if (state !== "all") conditions.push(eq(issues.state, state));
     if (repoId) conditions.push(eq(issues.repositoryId, Number(repoId)));
@@ -29,11 +28,12 @@ export async function GET(req: Request) {
 
     const where = conditions.length ? and(...conditions) : undefined;
 
-    const data = await db
+    const data = db
       .select()
       .from(issues)
       .where(where)
-      .orderBy(desc(issues.updatedAt));
+      .orderBy(desc(issues.updatedAt))
+      .all() as any[];
     return NextResponse.json({ issues: data });
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch issues" }, { status: 500 });
@@ -45,11 +45,12 @@ export async function POST(req: Request) {
     const body = await req.json();
     const input = issueSchema.parse(body);
 
-    const db = await getDb();
-    const [repo] = await db
+    const [repo] = db
       .select()
       .from(repositories)
-      .where(eq(repositories.id, input.repositoryId));
+      .where(eq(repositories.id, input.repositoryId))
+      .limit(1)
+      .all() as any[];
     if (!repo) {
       return NextResponse.json({ error: "Repository not found" }, { status: 404 });
     }
@@ -70,7 +71,7 @@ export async function POST(req: Request) {
       // fall back to local-only
     }
 
-    const [created] = await db
+    const [created] = db
       .insert(issues)
       .values({
         githubId: githubIssue?.id ?? null,
@@ -88,7 +89,8 @@ export async function POST(req: Request) {
         updatedAt: new Date(),
         source: githubIssue ? "github" : "local",
       })
-      .returning();
+      .returning()
+      .all() as any[];
 
     await auditLog({
       action: "issue.create",
